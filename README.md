@@ -48,6 +48,6 @@ Quantifiers follow the direction and specify the quantity:
 - **`P{2}r`:** At least two reverse pinbars
 
 ### Complex Pattern
-- **`(I+f|P+r)>C*f>I+r>C+f>I+r`:**` This pattern represents a sequence where the first stage is either one or more forward imbalances (I+f) or a reverse pinbar (P+r), followed by any number of forward consolidations (C*f), then one or more reverse imbalances (I+r), followed by one or more forward consolidations (C+f), and finally, one or more reverse imbalances (I+r) again.
+- **`(I+f|P+r)>C*f>I+r>C+f>I+r`:** This pattern represents a sequence where the first stage is either one or more forward imbalances (I+f) or a reverse pinbar (P+r), followed by any number of forward consolidations (C*f), then one or more reverse imbalances (I+r), followed by one or more forward consolidations (C+f), and finally, one or more reverse imbalances (I+r) again.
 
 This DSL, with its simple yet powerful syntax, offers a versatile tool for traders and analysts in the financial sector, aiding in the efficient and accurate representation of candlestick chart patterns.
