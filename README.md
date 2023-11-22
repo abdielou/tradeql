@@ -26,8 +26,8 @@ Quantifiers follow the direction and specify the quantity:
 - **Specific amount `{n}`:** Exactly 'n' occurrences, where 'n' is a number.
 
 ### Meta-Patterns
-- **Forward Consolidation `C+f`:** Equivalent to a series of bars or imbalances in any trend during a forward direction, denoted as `(Bf|Br|If)+`.
-- **Reverse Consolidation `C+r`:** Equivalent to a series of bars or imbalances in any trend during a reverse direction, denoted as `(Bf|Br|Ir)+`.
+- **Forward Consolidation `C+f`:** Equivalent to a series of bars in any direction or forward imbalances during a forward direction, denoted as `(Bf|Br|If)+`.
+- **Reverse Consolidation `C+r`:** Equivalent to a series of bars in any direction or reverse imbalances during a reverse direction, denoted as `(Bf|Br|Ir)+`.
 - **Neutral Consolidation `C+`:** A series of bars in either forward or reverse directions, without imbalances, denoted as `(Bf|Br)+`.
 
 ### Additional Syntax
