@@ -112,7 +112,6 @@ Allows users to define custom logic for detecting imbalances in a bar.
 
 ```c
 TradeQL.Imbalance = function(index) {
-    bars = this.getBars();
     bar = this.getBar(index);
     hasImbalance = false;
     /* Define custom logic to determine an imbalance */
@@ -138,7 +137,6 @@ This function enables users to define custom logic for identifying pinbars withi
 
 ```c
 TradeQL.Pinbar = function(index) {
-    bars = this.getBars();
     bar = this.getBar(index);
     isPinbar = false;
     withDirection = false;
@@ -161,11 +159,6 @@ TradeQL.Pinbar = function(index) {
 ### Utility Functions
 
 TradeQL provides a few key utility functions within its framework to facilitate the analysis of trading bar sequences.
-
-#### `this.getBars()`
-
-- **Functionality:** Retrieves the entire array of `Bar` objects in the current sequence being analyzed.
-- **Return Type:** Array of `Bar` objects.
 
 #### `this.getBar(index)`
 
