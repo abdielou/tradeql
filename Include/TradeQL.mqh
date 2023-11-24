@@ -4,13 +4,19 @@
 class TradeQL
 {
 private:
-    CArrayObj *bars[];
+    CArrayObj *bars;
     TqlTrend trend;
 
     PinbarFunction customPinbarFunction;
+    ImbalanceFunction customImbalanceFunction;
 
     bool Imbalance(int index)
     {
+        if (customImbalanceFunction != NULL)
+        {
+            return customImbalanceFunction(this, index);
+        }
+        Print("Imbalance function not implemented");
         return false;
     }
 
@@ -18,36 +24,43 @@ private:
     {
         if (customPinbarFunction != NULL)
         {
-            return customPinbarFunction(index);
+            return customPinbarFunction(this, index);
         }
-        // ExpertLastError("Custom pinbar function not set");
+        Print("Pinbar function not implemented");
         return false;
     }
 
-    TqlTrend GetTrend()
-    {
-        return trend;
-    }
-
 public:
-    TradeQL(CArrayObj &pbars[], TqlTrend ptrend)
+    TradeQL(CArrayObj &pbars, TqlTrend ptrend)
     {
-        this.bars = pbars;
+        this.bars = &pbars;
         this.trend = ptrend;
     }
 
-    CArrayObj *Match(string query)
+    void Match(string query, TqlMatch &match)
     {
-        return NULL;
+        // TODO: implement
+        Imbalance(0);
+        Pinbar(0);
     }
 
-    void SetCustomPinbarFunction(PinbarFunction func)
+    void SetImbalanceFunc(ImbalanceFunction func)
+    {
+        customImbalanceFunction = func;
+    }
+
+    void SetPinbarFunc(PinbarFunction func)
     {
         customPinbarFunction = func;
     }
 
     TqlBar *GetBar(int index)
     {
-        return bars[index];
+        return bars.At(index);
+    }
+
+    TqlTrend GetTrend()
+    {
+        return trend;
     }
 };
