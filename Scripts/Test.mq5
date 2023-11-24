@@ -1,11 +1,5 @@
 #include "../Include/TradeQL.mqh"
-
-bool MyCustomImbalanceFunction(TradeQL &tradeQL, int index)
-{
-    TqlBar *bar = tradeQL.GetBar(index);
-    Print("MyCustomImbalanceFunction: " + DoubleToString(bar.open));
-    return true;
-}
+#include "../Include/Imbalance.mqh"
 
 void OnStart()
 {
@@ -15,8 +9,8 @@ void OnStart()
     PopulateBars(*bars);
     TradeQL *tradeQL = new TradeQL(*bars, bullish);
 
-    // Use
-    tradeQL.SetImbalanceFunc(MyCustomImbalanceFunction);
+    // Test TradeQL
+    tradeQL.SetImbalanceFunc(TqlImbalance);
     TqlMatch match;
     tradeQL.Match("I+f", match);
 
@@ -27,13 +21,25 @@ void OnStart()
 
 void PopulateBars(CArrayObj &bars)
 {
-    for (int i = 0; i < 100; i++)
-    {
-        TqlBar *bar = new TqlBar();
-        bar.open = 1.0;
-        bar.close = 1.0;
-        bar.high = 1.0;
-        bar.low = 1.0;
-        bars.Add(bar);
-    }
+    // NOTE these values are inserted in reverse order to follow MT's convention where the most recent bar is at index 0
+    TqlBar *bar2 = new TqlBar();
+    bar2.high = 7;
+    bar2.close = 6;
+    bar2.open = 4;
+    bar2.low = 3.5;
+    bars.Add(bar2);
+
+    TqlBar *bar1 = new TqlBar();
+    bar1.high = 5;
+    bar1.close = 4;
+    bar1.open = 2;
+    bar1.low = 1.5;
+    bars.Add(bar1);
+
+    TqlBar *bar0 = new TqlBar();
+    bar0.high = 3;
+    bar0.close = 2;
+    bar0.open = 1;
+    bar0.low = 0;
+    bars.Add(bar0);
 }

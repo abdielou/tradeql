@@ -40,8 +40,7 @@ public:
     void Match(string query, TqlMatch &match)
     {
         // TODO: implement
-        Imbalance(0);
-        Pinbar(0);
+        Imbalance(1);
     }
 
     void SetImbalanceFunc(ImbalanceFunction func)
@@ -62,5 +61,10 @@ public:
     TqlTrend GetTrend()
     {
         return trend;
+    }
+
+    int GetBarCount()
+    {
+        return bars.Total();
     }
 };
