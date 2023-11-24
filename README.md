@@ -59,8 +59,6 @@ Quantifiers follow the direction and specify the quantity:
 
 - **`(I+f|P+r)>C*f>I+r>C+f>I+r`:** This pattern represents a sequence where the first stage is either one or more forward imbalances `I+f` or a reverse pinbar `P+r`, followed by any number of forward consolidations `C*f`, then one or more reverse imbalances `I+r`, followed by one or more forward consolidations `C+f`, and finally, one or more reverse imbalances `I+r` again.
 
-This DSL, with its simple yet powerful syntax, offers a versatile tool for traders and analysts in the financial sector, aiding in the efficient and accurate representation of candlestick chart patterns.
-
 ## API
 
 ### `TradeQL.match`
@@ -96,12 +94,11 @@ print(matches[2]); // { startPos: ..., endPos: ... } - second captured group, if
 
 - The first element of the matches array represents the full match of the query.
 - Subsequent elements represent captured groups within the query, if present.
-- This structure allows users to easily access the start and end positions of both the full match and any sub-patterns captured by groups.
-- This design ensures that TradeQL.match provides detailed positional information for both the overall pattern and its components, making it highly useful for precise analysis in trading scenarios.
+- This structure allows users access the start and end positions of both the full match and any sub-patterns captured by groups.
 
 ### `TradeQL.Imbalance`
 
-Allows users to define custom logic for detecting imbalances in a bar, with access to the entire sequence of bars and individual bar details.
+Allows users to define custom logic for detecting imbalances in a bar.
 
 #### Parameters
 
@@ -125,7 +122,7 @@ TradeQL.Imbalance = function(index) {
 
 ### `TradeQL.Pinbar`
 
-This function enables users to define custom logic for identifying pinbars within a bar sequence. It provides access to individual bar details for precise analysis, allowing users to determine not only the presence of a pinbar but also its directional alignment relative to the current trend.
+This function enables users to define custom logic for identifying pinbars within a bar sequence.
 
 #### Parameters
 
@@ -159,18 +156,16 @@ TradeQL.Pinbar = function(index) {
 - **Implementation in TradeQL.Pinbar:**
   - When implementing the TradeQL.Pinbar function, users should consider the trend context to determine if the pinbar is 'with direction' or 'against direction'.
   - The `withDirection` boolean should reflect whether the pinbar aligns with or opposes the current trend, based on the orientation of its long wick.
-- **Use of Trend Data:** Utilizing the current trend data (accessible via `this.getTrend()`) is crucial in accurately assessing the directional significance of a pinbar within the TradeQL framework.
 - **Example:** A pinbar that goes withDirection is one where the orientation of its long wick aligns with the current market trend, suggesting a continuation of that trend. For example, given a bullish trend, a pinbar `withDirection=true` is a pinbar where the long wick is on the Low side.
 
 ### Utility Functions
 
-TradeQL provides a few key utility functions within its framework to facilitate the analysis of trading bar sequences. These accessors are integral for custom functions like `TradeQL.Imbalance` and `TradeQL.Pinbar`, allowing users to access context data effectively.
+TradeQL provides a few key utility functions within its framework to facilitate the analysis of trading bar sequences.
 
 #### `this.getBars()`
 
 - **Functionality:** Retrieves the entire array of `Bar` objects in the current sequence being analyzed.
 - **Return Type:** Array of `Bar` objects.
-- **Usage:** Ideal for scenarios where the analysis requires context from the entire sequence of bars. For example, when determining the significance of a bar based on its relation to preceding or succeeding bars.
 
 #### `this.getBar(index)`
 
@@ -178,17 +173,10 @@ TradeQL provides a few key utility functions within its framework to facilitate 
 - **Parameter**
   - `index` (`integer`): The index of the bar in the sequence.
 - **Return Type:** `Bar` object.
-- **Usage:** Useful for targeted analysis of a single bar, such as detecting specific patterns like imbalances or pinbars. It allows users to focus on individual bars and their properties like open, close, high, and low values.
-- **Considerations:** When using this.getBar(index), it's important to handle cases where the index might be outside the bounds of the bar sequence, such as negative indices or indices exceeding the length of the bar array.
+- **Usage:** Useful for targeted analysis of a single bar and their properties like open, close, high, and low values.
 
 #### `this.getTrend`
 
 - **Functionality:** Retrieves the current market trend being used in the TradeQL analysis.
 - **Return Type:** `Trend`, which is a string value, typically either 'bullish' or 'bearish'.
-- **Usage:** This function is used to obtain the trend context in which the TradeQL analysis is being performed. It can be crucial in situations where the definition of an imbalance or a pinbar might vary depending on whether the market is in a bullish or bearish trend.
-
-#### Notes:
-
-- These accessors are designed to provide both a broad overview and detailed insights into the bar sequence, catering to diverse analytical needs.
-- They enhance the flexibility of TradeQL, allowing users to implement custom logic based on both individual bar characteristics and the overall context of the bar sequence.
-- By providing these accessors, TradeQL ensures that users can tailor their pattern recognition and analysis strategies to fit specific trading scenarios and objectives.
+- **Usage:** This function is used to obtain the trend context in which the TradeQL analysis is being performed.
