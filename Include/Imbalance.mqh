@@ -4,7 +4,10 @@ bool TqlImbalance(TradeQL &tradeQL, int index)
 {
     // Validate there's enough data to calculate
     if (index < 1 || index > tradeQL.GetBarCount() - 2)
+    {
+        Print("ERROR: Not enough data to calculate TqlImbalance at index ", index);
         return false;
+    }
 
     // Get bars
     TqlBar *target = tradeQL.GetBar(index);
