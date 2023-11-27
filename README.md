@@ -1,6 +1,6 @@
 # TradeQL `v0.1.0`
 
-> An intuitive and concise query language for precisely defining and analyzing candlestick chart patterns in trading.
+> A regex-inspired query language for the description and analysis of candlestick chart patterns in trading.
 
 ## Introduction
 
