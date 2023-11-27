@@ -10,16 +10,11 @@ void OnStart()
     TradeQL *tradeQL = new TradeQL(*bars, bullish);
 
     // Test Imbalance
-    bool hasImbalance = TqlImbalance(tradeQL, 1); // 1 has imbalance
+    bool hasImbalance = Imbalance(tradeQL, 1); // 1 has imbalance
     if (!hasImbalance)
-        Print("[FAIL] TqlImbalance test failed");
+        Print("[FAIL] Imbalance test failed");
     else
-        Print("[PASS] TqlImbalance test passed");
-
-    // Test TradeQL
-    tradeQL.SetImbalanceFunc(TqlImbalance);
-    TqlMatch match;
-    tradeQL.Match("I+f", match);
+        Print("[PASS] Imbalance test passed");
 
     // Cleanup
     delete tradeQL;
