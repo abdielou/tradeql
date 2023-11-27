@@ -69,20 +69,8 @@ private:
             case '>':
                 AddToken(TOKEN_SEQUENCE, (string)c);
                 break;
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                AddToken(TOKEN_NUMBER, (string)c);
-                break;
-
             // Unknown or not implemented yet
+            // case '0-9':
             // case ',':
             // case '{n}':
             // case 'C+f':
