@@ -16,7 +16,7 @@ private:
         {
             return customImbalanceFunction(this, index);
         }
-        Print("Imbalance function not implemented");
+        Print("WARNING: Imbalance function not implemented");
         return false;
     }
 
@@ -26,7 +26,7 @@ private:
         {
             return customPinbarFunction(this, index);
         }
-        Print("Pinbar function not implemented");
+        Print("WARNING: Pinbar function not implemented");
         return false;
     }
 
@@ -41,6 +41,7 @@ public:
     {
         // TODO: implement
         Imbalance(1);
+        Pinbar(1);
     }
 
     void SetImbalanceFunc(ImbalanceFunction func)
