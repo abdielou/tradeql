@@ -29,7 +29,7 @@ private:
     string v;
 
 public:
-    Token(TokenType type, string value)
+    Token(TokenType type, string value = "")
     {
         this.t = type;
         this.v = value;
