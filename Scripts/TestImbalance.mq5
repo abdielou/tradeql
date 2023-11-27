@@ -3,11 +3,6 @@
 
 void OnStart()
 {
-    TestImbalance();
-}
-
-void TestImbalance()
-{
     // Init
     TqlTrend bullish = TqlTrend::bullish;
     CArrayObj *bars = new CArrayObj();

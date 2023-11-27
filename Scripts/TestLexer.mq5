@@ -3,11 +3,6 @@
 
 void OnStart()
 {
-    TestLexer();
-}
-
-void TestLexer()
-{
     const string query = GetTestQuery();
     CArrayObj *expected = new CArrayObj();
     GetTestTokens(expected);
