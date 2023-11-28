@@ -1,30 +1,15 @@
-# Pattern
-Pattern      ::= Imbalance | Bar | Pinbar
-Imbalance    ::= 'I'
-Bar          ::= 'B'
-Pinbar       ::= 'P'
+# Basic Elements
+Pattern        ::= 'I' | 'B' | 'P'
+Direction      ::= 'f' | 'r'
+Quantifier     ::= '*' | '+' | '{' Number '}'
+Number         ::= Digit+
+Digit          ::= '0' | '1' | ... | '9'
 
-# Direction
-Direction    ::= 'f' | 'r'
+# Composite Structures
+BasicExpr      ::= Pattern Direction? Quantifier?
+AltExpr        ::= BasicExpr ('|' BasicExpr)*
+Group          ::= '(' AltExpr ')' Quantifier?
 
-# Quantifier
-Quantifier   ::= ZeroOrMore | OneOrMore | ExactN
-ZeroOrMore   ::= '*'
-OneOrMore    ::= '+'
-ExactN       ::= '{' Number '}'
-Number       ::= Digit+
-Digit        ::= '0' | '1' | ... | '9'
-
-# Grouping
-DirPattern  ::= Pattern Direction*
-QuantPattern ::= DirPattern Quantifier*
-Alternation  ::= DirPattern '|' DirPattern
-Group        ::= '(' DirPattern | Alternation ')' Quantifier*
-PatternExpr  ::= Group | Alternation | DirPattern | QuantPattern
-
-# Sequence
-SequenceExpr ::= PatternExpr (SequenceOperator PatternExpr)*
-SequenceOperator ::= '>'
-
-# Expression
-Expression   ::= SequenceExpr | Group | Alternation | DirPattern | QuantPattern
+# Top-Level Structure
+Expression     ::= Group | AltExpr
+SequenceExpr   ::= Expression ('>' Expression)*
