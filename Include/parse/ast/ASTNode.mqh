@@ -1,9 +1,10 @@
 enum ASTNodeType
 {
     TYPE_PATTERN_NODE,
+    TYPE_ALT_EXPR_NODE,
 };
 
-class ASTNode
+class ASTNode : public CObject
 {
 protected:
     ASTNodeType nodeType;

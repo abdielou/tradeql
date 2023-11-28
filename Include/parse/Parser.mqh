@@ -3,6 +3,7 @@
 #include "../lex/Token.mqh"
 #include "./ast/ASTNode.mqh"
 #include "./ast/PatternNode.mqh"
+#include "./ast/AltExprNode.mqh"
 
 class Parser
 {
@@ -34,6 +35,21 @@ private:
     bool IsTokenQuantifier(TokenType type)
     {
         return type == TOKEN_ZERO_OR_MORE || type == TOKEN_ONE_OR_MORE;
+    }
+
+    // Top Level Rule
+    ASTNode *ParseSequenceExpr()
+    {
+        // TODO
+        return ParseAltExpr();
+    }
+
+public:
+    Parser(CArrayObj *tokens) : tokenList(tokens), pos(0) {}
+
+    ASTNode *Parse()
+    {
+        return ParseSequenceExpr();
     }
 
     // Expression Rules
@@ -69,18 +85,29 @@ private:
         return NULL;
     }
 
-    // Top Level Rule
-    ASTNode *ParseSequenceExpr()
+    ASTNode *ParseAltExpr()
     {
-        // TODO
-        return ParseBasicExpr();
-    }
+        AltExprNode *altExprNode = new AltExprNode();
+        ASTNode *exprNode = NULL;
 
-public:
-    Parser(CArrayObj *tokens) : tokenList(tokens), pos(0) {}
+        do
+        {
+            exprNode = ParseBasicExpr();
+            if (exprNode != NULL)
+            {
+                altExprNode.AddExpression(exprNode);
+            }
 
-    ASTNode *Parse()
-    {
-        return ParseSequenceExpr();
+            if (GetCurrentToken() != NULL && GetCurrentToken().GetType() == TOKEN_ALTERNATION)
+            {
+                AdvanceToken();
+            }
+            else
+            {
+                break;
+            }
+        } while (true);
+
+        return altExprNode.GetExpressions().Total() > 0 ? altExprNode : NULL;
     }
 };
