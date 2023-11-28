@@ -13,7 +13,7 @@ void TestParseBasicExpr()
     Parser parser(mockTokens);
 
     // Call ParseBasicExpr and get the result
-    ASTNode *result = parser.Parse();
+    ASTNode *result = parser.ParseBasicExpr();
 
     // Assert the results
     if (result != NULL && result.GetNodeType() == TYPE_PATTERN_NODE)
@@ -21,16 +21,59 @@ void TestParseBasicExpr()
         PatternNode *patternNode = (PatternNode *)result;
         if (patternNode.GetPattern() == "I" && patternNode.GetDirection() == "f" && patternNode.GetQuantifier() == "+")
         {
-            Print("[PASS] Test Passed: Correct pattern, direction, and quantifier");
+            Print("[PASS] Test Passed: Correct pattern, direction, and quantifier for BasicExpr");
         }
         else
         {
-            Print("[FAIL] Test Failed: Incorrect pattern, direction, or quantifier");
+            Print("[FAIL] Test Failed: Incorrect pattern, direction, or quantifier for BasicExpr");
         }
     }
     else
     {
-        Print("[FAIL] Test Failed: Incorrect node type");
+        Print("[FAIL] Test Failed: Incorrect node type for BasicExpr");
+    }
+
+    // Cleanup
+    delete result;
+    for (int i = 0; i < mockTokens.Total(); i++)
+    {
+        delete mockTokens.At(i);
+    }
+    delete mockTokens;
+}
+
+void TestParseAltExpr()
+{
+    // Create a mock token list for an alternation expression
+    CArrayObj *mockTokens = new CArrayObj();
+    mockTokens.Add(new Token(TOKEN_IMBALANCE, "I"));   // Pattern
+    mockTokens.Add(new Token(TOKEN_ALTERNATION, "|")); // Alternation
+    mockTokens.Add(new Token(TOKEN_BAR, "B"));         // Pattern
+    mockTokens.Add(new Token(TOKEN_FORWARD, "f"));     // Direction
+    mockTokens.Add(new Token(TOKEN_ONE_OR_MORE, "+")); // Quantifier
+
+    // Instantiate the parser with the mock token list
+    Parser parser(mockTokens);
+
+    // Call ParseAltExpr and get the result
+    ASTNode *result = parser.ParseAltExpr();
+
+    // Assert the results
+    if (result != NULL && result.GetNodeType() == TYPE_ALT_EXPR_NODE)
+    {
+        AltExprNode *altExprNode = (AltExprNode *)result;
+        if (altExprNode.GetExpressions().Total() == 2)
+        {
+            Print("[PASS] Test Passed: Correct number of expressions in AltExpr");
+        }
+        else
+        {
+            Print("[FAIL] Test Failed: Incorrect number of expressions in AltExpr");
+        }
+    }
+    else
+    {
+        Print("[FAIL] Test Failed: Incorrect node type for AltExpr, ", result == NULL ? "NULL" : result.GetNodeType());
     }
 
     // Cleanup
@@ -45,4 +88,5 @@ void TestParseBasicExpr()
 void OnStart()
 {
     TestParseBasicExpr();
+    TestParseAltExpr();
 }
