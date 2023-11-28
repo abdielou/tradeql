@@ -12,6 +12,3 @@ class Parser;
 // TradeQL
 typedef bool (*ImbalanceFunction)(TradeQL &tradeQL, int index);
 typedef bool (*PinbarFunction)(TradeQL &tradeQL, int index);
-
-// Parser
-typedef ASTNode *(*ParseBasicExprFunction)(Parser &parser);

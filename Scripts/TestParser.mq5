@@ -1,6 +1,5 @@
 #include <Arrays\ArrayObj.mqh>
 #include "../Include/parse/Parser.mqh"
-#include "../Include/parse/grammar/ParseBasicExpr.mqh"
 
 void TestParseBasicExpr()
 {
@@ -14,7 +13,7 @@ void TestParseBasicExpr()
     Parser parser(mockTokens);
 
     // Call ParseBasicExpr and get the result
-    ASTNode *result = ParseBasicExpr(parser);
+    ASTNode *result = parser.Parse();
 
     // Assert the results
     if (result != NULL && result.GetNodeType() == TYPE_PATTERN_NODE)
