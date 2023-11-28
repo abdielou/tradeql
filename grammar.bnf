@@ -1,0 +1,30 @@
+# Pattern
+Pattern      ::= Imbalance | Bar | Pinbar
+Imbalance    ::= 'I'
+Bar          ::= 'B'
+Pinbar       ::= 'P'
+
+# Direction
+Direction    ::= 'f' | 'r'
+
+# Quantifier
+Quantifier   ::= ZeroOrMore | OneOrMore | ExactN
+ZeroOrMore   ::= '*'
+OneOrMore    ::= '+'
+ExactN       ::= '{' Number '}'
+Number       ::= Digit+
+Digit        ::= '0' | '1' | ... | '9'
+
+# Grouping
+DirPattern  ::= Pattern Direction*
+QuantPattern ::= DirPattern Quantifier*
+Alternation  ::= DirPattern '|' DirPattern
+Group        ::= '(' DirPattern | Alternation ')' Quantifier*
+PatternExpr  ::= Group | Alternation | DirPattern | QuantPattern
+
+# Sequence
+SequenceExpr ::= PatternExpr (SequenceOperator PatternExpr)*
+SequenceOperator ::= '>'
+
+# Expression
+Expression   ::= SequenceExpr | Group | Alternation | DirPattern | QuantPattern
