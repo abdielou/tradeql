@@ -1,7 +1,10 @@
+#include <Arrays\ArrayObj.mqh>
+
 enum ASTNodeType
 {
     TYPE_PATTERN_NODE,
     TYPE_ALT_EXPR_NODE,
+    TYPE_GROUP_NODE,
 };
 
 class ASTNode : public CObject
@@ -11,7 +14,6 @@ protected:
 
 public:
     ASTNode(ASTNodeType type) : nodeType(type) {}
-
     virtual ~ASTNode() {}
 
     ASTNodeType GetNodeType() const

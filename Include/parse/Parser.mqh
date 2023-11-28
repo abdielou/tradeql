@@ -4,6 +4,7 @@
 #include "./ast/ASTNode.mqh"
 #include "./ast/PatternNode.mqh"
 #include "./ast/AltExprNode.mqh"
+#include "./ast/GroupNode.mqh"
 
 class Parser
 {
@@ -41,7 +42,7 @@ private:
     ASTNode *ParseSequenceExpr()
     {
         // TODO
-        return ParseAltExpr();
+        return ParseGroup();
     }
 
 public:
@@ -61,7 +62,7 @@ public:
         if (currentToken != NULL && IsTokenPattern(currentToken.GetType()))
         {
             PatternNode *patternNode = new PatternNode(currentToken.GetValue());
-            AdvanceToken();
+            AdvanceToken(); // Consume the 'Direction' or Quantifier token
 
             // Optional Direction
             currentToken = GetCurrentToken();
@@ -100,7 +101,7 @@ public:
 
             if (GetCurrentToken() != NULL && GetCurrentToken().GetType() == TOKEN_ALTERNATION)
             {
-                AdvanceToken();
+                AdvanceToken(); // Consume the '|' token
             }
             else
             {
@@ -109,5 +110,36 @@ public:
         } while (true);
 
         return altExprNode.GetExpressions().Total() > 0 ? altExprNode : NULL;
+    }
+
+    ASTNode *ParseGroup()
+    {
+        Token *currentToken = GetCurrentToken();
+
+        if (currentToken != NULL && currentToken.GetType() == TOKEN_GROUP_OPEN)
+        {
+            AdvanceToken(); // Consume the '(' token
+
+            ASTNode *innerExpr = ParseAltExpr();
+
+            currentToken = GetCurrentToken();
+            if (currentToken != NULL && currentToken.GetType() == TOKEN_GROUP_CLOSE)
+            {
+                AdvanceToken(); // Consume the ')' token
+
+                // Optional Quantifier
+                string quantifier = "";
+                currentToken = GetCurrentToken();
+                if (currentToken != NULL && IsTokenQuantifier(currentToken.GetType()))
+                {
+                    quantifier = currentToken.GetValue();
+                    AdvanceToken();
+                }
+
+                return new GroupNode(innerExpr, quantifier);
+            }
+        }
+
+        return NULL;
     }
 };

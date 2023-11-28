@@ -10,6 +10,8 @@ private:
 public:
     PatternNode(string pattern) : ASTNode(TYPE_PATTERN_NODE), p(pattern), d(""), q("") {}
 
+    ~PatternNode() {}
+
     void SetDirection(string dir)
     {
         d = dir;
