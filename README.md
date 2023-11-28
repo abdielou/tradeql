@@ -31,6 +31,8 @@ Quantifiers follow the direction and specify the quantity:
 
 ### Meta-Patterns
 
+> Optional. Not implemented on v1.
+
 - **Forward Consolidation `C+f`:** Equivalent to a series of bars in any direction or forward imbalances during a forward direction, denoted as `(Bf|Br|If)+`.
 - **Reverse Consolidation `C+r`:** Equivalent to a series of bars in any direction or reverse imbalances during a reverse direction, denoted as `(Bf|Br|Ir)+`.
 - **Neutral Consolidation `C+`:** A series of bars in either forward or reverse directions, without imbalances, denoted as `(Bf|Br)+`.
@@ -53,11 +55,11 @@ Quantifiers follow the direction and specify the quantity:
 ### Simple Patterns
 
 - **`Bf+`:** A series of forward bars
-- **`P{2}r`:** At least two reverse pinbars
+- **`Pr{2}`:** At least two reverse pinbars
 
 ### Complex Pattern
 
-- **`(I+f|P+r)>C*f>I+r>C+f>I+r`:** This pattern represents a sequence where the first stage is either one or more forward imbalances `I+f` or a reverse pinbar `P+r`, followed by any number of forward consolidations `C*f`, then one or more reverse imbalances `I+r`, followed by one or more forward consolidations `C+f`, and finally, one or more reverse imbalances `I+r` again.
+- **`(If+|Pr+)>Cf*>Ir+>Cf+>Ir+`:** This pattern represents a sequence where the first stage is either one or more forward imbalances `If+` or a reverse pinbar `Pr+`, followed by any number of forward consolidations `Cf*`, then one or more reverse imbalances `Ir+`, followed by one or more forward consolidations `Cf+`, and finally, one or more reverse imbalances `Ir+` again.
 
 ## API
 
@@ -80,7 +82,7 @@ Matches a TradeQL query against a sequence of bars given a trend.
 #### Example Usage
 
 ```c
-query = "(I+f|P+r)>C*f>I+r>C+f>I+r";
+query = "(If|Pr)+>Cf*>Ir+>Cf+>Ir+";
 bars = [{ open: ..., close: ..., high: ..., low: ... }, ...];
 trend = "bullish"; // or "bearish"
 
