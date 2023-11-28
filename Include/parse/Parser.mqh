@@ -2,12 +2,14 @@
 #include "../Common.mqh"
 #include "../lex/Token.mqh"
 #include "./ast/ASTNode.mqh"
+#include "./grammar/ParseBasicExpr.mqh"
 
 class Parser
 {
 private:
     CArrayObj *tokenList;
     int pos;
+    ParseBasicExprFunction parseBasicExpr;
 
     // Top Level Rule
     ASTNode *ParseSequenceExpr()
@@ -17,7 +19,10 @@ private:
     }
 
 public:
-    Parser(CArrayObj *tokens) : tokenList(tokens), pos(0) {}
+    Parser(CArrayObj *tokens) : tokenList(tokens), pos(0)
+    {
+        parseBasicExpr = ParseBasicExpr;
+    }
 
     ASTNode *Parse()
     {
