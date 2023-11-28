@@ -73,7 +73,7 @@ void TestParseAltExpr()
     }
     else
     {
-        Print("[FAIL] Test Failed: Incorrect node type for AltExpr, ", result == NULL ? "NULL" : result.GetNodeType());
+        Print("[FAIL] Test Failed: Incorrect node type for AltExpr");
     }
 
     // Cleanup
