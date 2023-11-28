@@ -70,12 +70,9 @@ private:
                 AddToken(TOKEN_SEQUENCE, (string)c);
                 break;
             // Unknown or not implemented yet
+            // case '{':
+            // case '}':
             // case '0-9':
-            // case ',':
-            // case '{n}':
-            // case 'C+f':
-            // case 'C+r':
-            // case 'C+':
             default:
                 Print("Not implemented or unknown token ", c, " at position ", position, " in ", inputString);
                 break;
