@@ -1,0 +1,16 @@
+# Basic Elements
+Pattern        ::= 'I' | 'B' | 'P'
+Direction      ::= 'f' | 'r'
+Quantifier     ::= '*' | '+'
+# Quantifier     ::= '*' | '+' | '{' Number '}'
+# Number         ::= Digit+
+# Digit          ::= '0' | '1' | ... | '9'
+
+# Composite Structures
+BasicExpr      ::= Pattern Direction? Quantifier?
+AltExpr        ::= BasicExpr ('|' BasicExpr)*
+Group          ::= '(' AltExpr ')' Quantifier?
+
+# Top-Level Structure
+Expression     ::= Group | AltExpr
+SequenceExpr   ::= Expression ('>' Expression)*

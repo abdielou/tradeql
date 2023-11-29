@@ -1,13 +1,13 @@
-MIT License
+TradeQL FOSS License
 
 Copyright (c) 2023 Abdiel Aviles
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+to use, copy, modify, merge, publish, distribute, copies of the Software, and
+to permit persons to whom the Software is furnished to do so, subject to the
+following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
@@ -19,3 +19,32 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+TradeQL Commercial License
+
+Copyright (c) 2023 Mozart Analytics FX LLC.
+
+This license agreement ("Agreement") is a legal agreement between you (either an individual or a single entity) and Mozart Analytics FX LLC. for the software product identified above, which includes computer software and associated media and printed materials, and may include online or electronic documentation ("Software Product").
+
+By installing, copying, or otherwise using the Software Product, you agree to be bound by the terms of this Agreement.
+
+1. **Grant of License:** This Agreement grants you the following rights:
+
+   - Installation and Use: You may install and use an unlimited number of copies of the Software Product.
+   - Reproduction and Distribution: You may reproduce and distribute copies of the Software Product.
+
+2. **Description of Other Rights and Limitations:**
+
+   - Limitations on Reverse Engineering, Decompilation, and Disassembly: You may not reverse engineer, decompile, or disassemble the Software Product.
+   - Rental: You may not rent, lease, or lend the Software Product.
+
+3. **Termination:** Without prejudice to any other rights, Mozart Analytics FX LLC. may terminate this Agreement if you fail to comply with the terms and conditions of this Agreement.
+
+4. **Copyright:** The Software Product is protected by copyright laws and international copyright treaties, as well as other intellectual property laws and treaties.
+
+5. **Commercial Licensing Inquiries:**
+   - For commercial use of the Software Product, please contact Mozart Analytics FX LLC. to discuss licensing arrangements.
+   - Each commercial license will be subject to specific terms and conditions, tailored to the needs and agreements established with the licensee. This may include discussions about licensing fees, royalties, or other forms of commercial arrangements.
+   - The authorization for commercial use will be granted upon reaching an agreement and compliance with these negotiated terms.

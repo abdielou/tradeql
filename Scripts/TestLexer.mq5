@@ -3,14 +3,16 @@
 
 void OnStart()
 {
-    const string query = GetTestQuery();
+    const string validQuery = GetTestQuery();
+    const string invalidQuery = "X";
+
     CArrayObj *expected = new CArrayObj();
     GetTestTokens(expected);
 
-    Lexer *lexer = new Lexer(query);
+    Lexer *lexer = new Lexer(validQuery);
     CArrayObj *tokens = lexer.GetTokens();
 
-    // Assert
+    // Assert valid query
     for (int i = 0; i < tokens.Total(); i++)
     {
         Token *token = (Token *)tokens.At(i);
@@ -21,12 +23,24 @@ void OnStart()
             return;
         }
     }
+
+    // Assert invalid query
+    Lexer *invalidLexer = new Lexer(invalidQuery);
+    CArrayObj *invalidTokens = invalidLexer.GetTokens();
+    if (invalidTokens.Total() != 0)
+    {
+        Print("[FAIL] Lexer test failed at invalid query");
+        return;
+    }
+
     Print("[PASS] Lexer test passed");
 
     // Cleanup
     delete expected;
     delete lexer;
+    delete invalidLexer;
     delete tokens;
+    delete invalidTokens;
 }
 
 string GetTestQuery()

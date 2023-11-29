@@ -28,8 +28,10 @@ private:
         return '\0';
     }
 
-    void Tokenize()
+    bool Tokenize()
     {
+        bool unknownTokenEncountered = false;
+
         while (position < StringLen(inputString))
         {
             char c = NextChar();
@@ -70,19 +72,35 @@ private:
                 AddToken(TOKEN_SEQUENCE, (string)c);
                 break;
             // Unknown or not implemented yet
+            // case '{':
+            // case '}':
             // case '0-9':
-            // case ',':
-            // case '{n}':
-            // case 'C+f':
-            // case 'C+r':
-            // case 'C+':
             default:
+                unknownTokenEncountered = true;
                 Print("Not implemented or unknown token ", c, " at position ", position, " in ", inputString);
                 break;
             }
         }
 
-        AddToken(TOKEN_END);
+        if (unknownTokenEncountered)
+        {
+            ClearTokens();
+            return false;
+        }
+        else
+        {
+            AddToken(TOKEN_END);
+            return true;
+        }
+    }
+
+    void ClearTokens()
+    {
+        for (int i = 0; i < tokens.Total(); i++)
+        {
+            delete tokens.At(i);
+        }
+        tokens.Clear();
     }
 
 public:
@@ -91,7 +109,8 @@ public:
         this.inputString = str;
         position = 0;
         tokens = new CArrayObj();
-        Tokenize();
+        if (!Tokenize())
+            Print("Tokenization failed due to unknown tokens.");
     }
 
     ~Lexer()

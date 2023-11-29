@@ -1,5 +1,8 @@
 #include <Arrays\ArrayObj.mqh>
 #include "Common.mqh"
+#include "./bar/TqlBar.mqh"
+#include "./bar/TqlMatch.mqh"
+#include "./bar/TqlTrend.mqh"
 
 class TradeQL
 {
