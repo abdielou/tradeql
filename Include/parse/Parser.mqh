@@ -42,7 +42,7 @@ private:
     ASTNode *ParseSequenceExpr()
     {
         // TODO
-        return ParseGroup();
+        return ParseExpression();
     }
 
 public:
@@ -137,6 +137,27 @@ public:
                 }
 
                 return new GroupNode(innerExpr, quantifier);
+            }
+        }
+
+        return NULL;
+    }
+
+    ASTNode *ParseExpression()
+    {
+        Token *currentToken = GetCurrentToken();
+
+        if (currentToken != NULL)
+        {
+            // Check for '(' to parse as Group
+            if (currentToken.GetType() == TOKEN_GROUP_OPEN)
+            {
+                return ParseGroup();
+            }
+            else
+            {
+                // If not a Group, parse as AltExpr
+                return ParseAltExpr();
             }
         }
 
