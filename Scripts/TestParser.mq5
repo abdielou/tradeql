@@ -207,10 +207,54 @@ void TestParseExpression()
     delete groupMockTokens;
 }
 
+void TestParseSequenceExpr()
+{
+    // Create a mock token list for a sequence expression
+    CArrayObj *mockTokens = new CArrayObj();
+    mockTokens.Add(new Token(TOKEN_IMBALANCE, "I"));   // First Expression
+    mockTokens.Add(new Token(TOKEN_SEQUENCE, ">"));    // Sequence operator
+    mockTokens.Add(new Token(TOKEN_GROUP_OPEN, "("));  // Group start
+    mockTokens.Add(new Token(TOKEN_BAR, "B"));         // Pattern in Group
+    mockTokens.Add(new Token(TOKEN_GROUP_CLOSE, ")")); // Group end
+    mockTokens.Add(new Token(TOKEN_ONE_OR_MORE, "+")); // Quantifier in Group
+
+    // Instantiate the parser with the mock token list
+    Parser parser(mockTokens);
+
+    // Call Parse (ParseSequenceExpr is top level) and get the result
+    ASTNode *result = parser.Parse();
+
+    // Assert the results
+    if (result != NULL && result.GetNodeType() == TYPE_SEQUENCE_EXPR_NODE)
+    {
+        SequenceExprNode *sequenceExprNode = (SequenceExprNode *)result;
+        if (sequenceExprNode.GetExpressions().Total() == 2)
+        {
+            Print("[PASS] Test Passed: Correct number of expressions in SequenceExpr");
+        }
+        else
+        {
+            Print("[FAIL] Test Failed: Incorrect number of expressions in SequenceExpr");
+        }
+    }
+    else
+    {
+        Print("[FAIL] Test Failed: Incorrect node type for SequenceExpr");
+    }
+
+    // Cleanup
+    delete result;
+    for (int i = 0; i < mockTokens.Total(); i++)
+    {
+        delete mockTokens.At(i);
+    }
+    delete mockTokens;
+}
+
 void OnStart()
 {
     TestParseBasicExpr();
     TestParseAltExpr();
     TestParseGroup();
-    TestParseExpression();
+    TestParseSequenceExpr();
 }
