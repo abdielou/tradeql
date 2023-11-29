@@ -3,6 +3,9 @@
 #include "./bar/TqlBar.mqh"
 #include "./bar/TqlMatch.mqh"
 #include "./bar/TqlTrend.mqh"
+#include "./lex/Lexer.mqh"
+#include "./parse/Parser.mqh"
+#include "./match/Matcher.mqh"
 
 class TradeQL
 {
@@ -42,9 +45,31 @@ public:
 
     void Match(string query, TqlMatch &match)
     {
-        // TODO: implement
-        Imbalance(1);
-        Pinbar(1);
+        // Tokenize the query
+        Lexer *lexer = new Lexer(query);
+        CArrayObj *tokens = lexer.GetTokens();
+        if (tokens.Total() == 0)
+        {
+            Print("WARNING: No tokens found");
+            return;
+        }
+
+        // Parse the tokens into an AST
+        Parser parser(tokens);
+        ASTNode *result = parser.Parse();
+        if (result == NULL)
+        {
+            Print("WARNING: No ASTNode returned");
+            return;
+        }
+
+        // Run the parsed AST against the list of bars
+        Matcher matcher(this.bars, this.trend);
+        CArrayObj *matches = new CArrayObj();
+        matcher.Match(result, matches);
+
+        // Return matches and groups
+        // TODO
     }
 
     void SetImbalanceFunc(ImbalanceFunction func)
