@@ -5,6 +5,7 @@
 #include "./ast/PatternNode.mqh"
 #include "./ast/AltExprNode.mqh"
 #include "./ast/GroupNode.mqh"
+#include "./ast/SequenceExprNode.mqh"
 
 class Parser
 {
@@ -38,11 +39,35 @@ private:
         return type == TOKEN_ZERO_OR_MORE || type == TOKEN_ONE_OR_MORE;
     }
 
-    // Top Level Rule
     ASTNode *ParseSequenceExpr()
     {
-        // TODO
-        return ParseExpression();
+        SequenceExprNode *sequenceExprNode = new SequenceExprNode();
+        ASTNode *exprNode = NULL;
+
+        do
+        {
+            exprNode = ParseExpression();
+            if (exprNode != NULL)
+            {
+                sequenceExprNode.AddExpression(exprNode);
+            }
+            else
+            {
+                break;
+            }
+
+            // Check for sequence operator '>'
+            if (GetCurrentToken() != NULL && GetCurrentToken().GetType() == TOKEN_SEQUENCE)
+            {
+                AdvanceToken();
+            }
+            else
+            {
+                break;
+            }
+        } while (true);
+
+        return sequenceExprNode.GetExpressions().Total() > 0 ? sequenceExprNode : NULL;
     }
 
 public:

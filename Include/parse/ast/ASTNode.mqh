@@ -5,6 +5,7 @@ enum ASTNodeType
     TYPE_PATTERN_NODE,
     TYPE_ALT_EXPR_NODE,
     TYPE_GROUP_NODE,
+    TYPE_SEQUENCE_EXPR_NODE
 };
 
 class ASTNode : public CObject
