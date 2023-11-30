@@ -1,8 +1,8 @@
 // Forward declarations
 class TradeQL;
 class Parser;
-class TqlBar;
-class TqlMatch;
+class Bar;
+class Match;
 class Lexer;
 class Token;
 class ASTNode;

@@ -1,8 +1,8 @@
 #include <Arrays\ArrayObj.mqh>
 #include "Common.mqh"
-#include "./bar/TqlBar.mqh"
-#include "./bar/TqlMatch.mqh"
-#include "./bar/TqlTrend.mqh"
+#include "./bar/Bar.mqh"
+#include "./bar/Match.mqh"
+#include "./bar/Trend.mqh"
 #include "./lex/Lexer.mqh"
 #include "./parse/Parser.mqh"
 #include "./match/Matcher.mqh"
@@ -11,7 +11,7 @@ class TradeQL
 {
 private:
     CArrayObj *bars;
-    TqlTrend trend;
+    Trend trend;
 
     PinbarFunction customPinbarFunction;
     ImbalanceFunction customImbalanceFunction;
@@ -37,13 +37,13 @@ private:
     }
 
 public:
-    TradeQL(CArrayObj &pbars, TqlTrend ptrend)
+    TradeQL(CArrayObj &pbars, Trend ptrend)
     {
         this.bars = &pbars;
         this.trend = ptrend;
     }
 
-    void Match(string query, TqlMatch &match)
+    void Match(string query, Match &match)
     {
         // Tokenize the query
         Lexer *lexer = new Lexer(query);
@@ -82,12 +82,12 @@ public:
         customPinbarFunction = func;
     }
 
-    TqlBar *GetBar(int index)
+    Bar *GetBar(int index)
     {
         return bars.At(index);
     }
 
-    TqlTrend GetTrend()
+    Trend GetTrend()
     {
         return trend;
     }

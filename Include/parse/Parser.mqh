@@ -153,11 +153,11 @@ public:
                 AdvanceToken(); // Consume the ')' token
 
                 // Optional Quantifier
-                string quantifier = "";
+                Quantifier quantifier = QUANTIFIER_UNKNOWN;
                 currentToken = GetCurrentToken();
                 if (currentToken != NULL && IsTokenQuantifier(currentToken.GetType()))
                 {
-                    quantifier = currentToken.GetValue();
+                    quantifier = StringToQuantifier(currentToken.GetValue());
                     AdvanceToken();
                 }
 

@@ -1,34 +1,37 @@
 #include "ASTNode.mqh"
+#include "../../pattern/Pattern.mqh"
+#include "../../pattern/Direction.mqh"
+#include "../../pattern/Quantifier.mqh"
 
 class PatternNode : public ASTNode
 {
 private:
-    string p;
-    string d;
-    string q;
+    Pattern p;
+    Direction d;
+    Quantifier q;
 
 public:
-    PatternNode(string pattern) : ASTNode(TYPE_PATTERN_NODE), p(pattern), d(""), q("") {}
+    PatternNode(string pattern) : ASTNode(TYPE_PATTERN_NODE), p(StringToPattern(pattern)), d(DIRECTION_UNKNOWN), q(QUANTIFIER_UNKNOWN) {}
 
     ~PatternNode() {}
 
     void SetDirection(string dir)
     {
-        d = dir;
+        d = StringToDirection(dir);
     }
     void SetQuantifier(string quant)
     {
-        q = quant;
+        q = StringToQuantifier(quant);
     }
-    string GetPattern() const
+    Pattern GetPattern() const
     {
         return p;
     }
-    string GetDirection() const
+    Direction GetDirection() const
     {
         return d;
     }
-    string GetQuantifier() const
+    Quantifier GetQuantifier() const
     {
         return q;
     }

@@ -1,4 +1,4 @@
-class TqlMatch
+class Match
 {
 public:
     int startIndex;

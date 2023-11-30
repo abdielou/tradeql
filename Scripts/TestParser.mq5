@@ -19,7 +19,10 @@ void TestParseBasicExpr()
     if (result != NULL && result.GetNodeType() == TYPE_PATTERN_NODE)
     {
         PatternNode *patternNode = (PatternNode *)result;
-        if (patternNode.GetPattern() == "I" && patternNode.GetDirection() == "f" && patternNode.GetQuantifier() == "+")
+        if (
+            patternNode.GetPattern() == PATTERN_IMBALANCE &&
+            patternNode.GetDirection() == DIRECTION_FORWARD &&
+            patternNode.GetQuantifier() == QUANTIFIER_ONE_OR_MORE)
         {
             Print("[PASS] Test Passed: Correct pattern, direction, and quantifier for BasicExpr");
         }
@@ -106,7 +109,7 @@ void TestParseGroup()
     if (result != NULL && result.GetNodeType() == TYPE_GROUP_NODE)
     {
         GroupNode *groupNode = (GroupNode *)result;
-        if (groupNode.GetQuantifier() == "+" && groupNode.GetInnerExpression().GetNodeType() == TYPE_ALT_EXPR_NODE)
+        if (groupNode.GetQuantifier() == QUANTIFIER_ONE_OR_MORE && groupNode.GetInnerExpression().GetNodeType() == TYPE_ALT_EXPR_NODE)
         {
             Print("[PASS] Test Passed: Correct structure and quantifier for Group");
         }
@@ -178,7 +181,7 @@ void TestParseExpression()
     if (groupResult != NULL && groupResult.GetNodeType() == TYPE_GROUP_NODE)
     {
         GroupNode *groupNode = (GroupNode *)groupResult;
-        if (groupNode.GetQuantifier() == "+" && groupNode.GetInnerExpression().GetNodeType() == TYPE_ALT_EXPR_NODE)
+        if (groupNode.GetQuantifier() == QUANTIFIER_ONE_OR_MORE && groupNode.GetInnerExpression().GetNodeType() == TYPE_ALT_EXPR_NODE)
         {
             Print("[PASS] Test Passed: Correct structure and quantifier for Expression (Group)");
         }

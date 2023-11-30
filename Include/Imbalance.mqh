@@ -10,9 +10,9 @@ bool Imbalance(TradeQL &tradeQL, int index)
     }
 
     // Get bars
-    TqlBar *target = tradeQL.GetBar(index);
-    TqlBar *prev = tradeQL.GetBar(index + 1);
-    TqlBar *next = tradeQL.GetBar(index - 1);
+    Bar *target = tradeQL.GetBar(index);
+    Bar *prev = tradeQL.GetBar(index + 1);
+    Bar *next = tradeQL.GetBar(index - 1);
 
     // Calculate
     bool isBullish = target.close > target.open;
