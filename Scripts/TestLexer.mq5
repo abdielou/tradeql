@@ -13,6 +13,7 @@ void OnStart()
     CArrayObj *tokens = lexer.GetTokens();
 
     // Assert valid query
+    bool passAllTokens = true;
     for (int i = 0; i < tokens.Total(); i++)
     {
         Token *token = (Token *)tokens.At(i);
@@ -20,20 +21,20 @@ void OnStart()
         if (token.GetType() != expectedToken.GetType())
         {
             Print("[FAIL] Lexer test failed at index ", i);
-            return;
+            passAllTokens = false;
+            break;
         }
     }
+    if (passAllTokens)
+        Print("[PASS] Lexer test passed for valid query with ", tokens.Total(), " tokens");
 
     // Assert invalid query
     Lexer invalidLexer(invalidQuery);
     CArrayObj *invalidTokens = invalidLexer.GetTokens();
     if (invalidTokens.Total() != 0)
-    {
         Print("[FAIL] Lexer test failed at invalid query");
-        return;
-    }
-
-    Print("[PASS] Lexer test passed");
+    else
+        Print("[PASS] Lexer test passed for invalid query");
 
     // Cleanup
     delete expected;
