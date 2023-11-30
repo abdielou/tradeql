@@ -1,6 +1,13 @@
-class Match
+class Match : public CObject
 {
+private:
+    int start;
+    int end;
+
 public:
-    int startIndex;
-    int endIndex;
+    Match(int startIndex = -1, int endIndex = -1) : start(startIndex), end(endIndex) {}
+    void SetStart(int startIndex) { this.start = startIndex; }
+    void SetEnd(int endIndex) { this.end = endIndex; }
+    int GetStart() { return this.start; }
+    int GetEnd() { return this.end; }
 };
