@@ -145,17 +145,17 @@ private:
 
     void MatchAltExprNode(ASTNode *node, CArrayObj *matches, int startIndex)
     {
-        // TODO
+        Print("WARNING: AltExprNode not implemented");
     }
 
     void MatchGroupNode(ASTNode *node, CArrayObj *matches, int startIndex)
     {
-        // TODO
+        Print("WARNING: GroupNode not implemented");
     }
 
     void MatchSequenceExprNode(ASTNode *node, CArrayObj *matches, int startIndex)
     {
-        // TODO
+        Print("WARNING: SequenceExprNode not implemented");
     }
 
 public:
@@ -193,6 +193,9 @@ public:
             break;
         case TYPE_PATTERN_NODE:
             MatchPatternNode(node, matches, 0);
+            break;
+        default:
+            Print("WARNING: Unknown node type");
             break;
         }
     }
