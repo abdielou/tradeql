@@ -7,7 +7,8 @@ void OnStart()
     PopulateBars(*bars);
 
     // Test Imbalance
-    ImbalanceMatcher matcher(bars);
+    ImbalanceMatcher matcher = new ImbalanceMatcher();
+    matcher.SetBars(*bars);
     bool hasImbalance = matcher.IsMatch(1); // 1 has imbalance
     if (!hasImbalance)
         Print("[FAIL] Imbalance test failed");

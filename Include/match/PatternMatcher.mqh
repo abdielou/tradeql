@@ -7,9 +7,24 @@ private:
     CArrayObj *bars;
 
 public:
-    PatternMatcher(CArrayObj &pbars) : bars(&pbars) {}
+    PatternMatcher() {}
     virtual ~PatternMatcher() {}
-    Bar *GetBar(int index) { return bars.At(index); }
-    int GetBarCount() { return bars.Total(); }
+    void SetBars(CArrayObj &pbars) { bars = &pbars; }
+    int GetBarCount()
+    {
+        if (bars == NULL)
+        {
+            return 0;
+        }
+        return bars.Total();
+    }
+    Bar *GetBar(int index)
+    {
+        if (bars == NULL)
+        {
+            return NULL;
+        }
+        return (Bar *)bars.At(index);
+    }
     virtual bool IsMatch(const int index) = 0;
 };

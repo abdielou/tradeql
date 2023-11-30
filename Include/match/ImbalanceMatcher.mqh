@@ -3,7 +3,7 @@
 class ImbalanceMatcher : public PatternMatcher
 {
 public:
-    ImbalanceMatcher(CArrayObj &pbars) : PatternMatcher(pbars) {}
+    ImbalanceMatcher() : PatternMatcher() {}
     bool IsMatch(const int index)
     {
         // Validate there's enough data to calculate
