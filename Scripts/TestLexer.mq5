@@ -9,7 +9,7 @@ void OnStart()
     CArrayObj *expected = new CArrayObj();
     GetTestTokens(expected);
 
-    Lexer *lexer = new Lexer(validQuery);
+    Lexer lexer(validQuery);
     CArrayObj *tokens = lexer.GetTokens();
 
     // Assert valid query
@@ -25,7 +25,7 @@ void OnStart()
     }
 
     // Assert invalid query
-    Lexer *invalidLexer = new Lexer(invalidQuery);
+    Lexer invalidLexer(invalidQuery);
     CArrayObj *invalidTokens = invalidLexer.GetTokens();
     if (invalidTokens.Total() != 0)
     {
@@ -37,10 +37,6 @@ void OnStart()
 
     // Cleanup
     delete expected;
-    delete lexer;
-    delete invalidLexer;
-    delete tokens;
-    delete invalidTokens;
 }
 
 string GetTestQuery()

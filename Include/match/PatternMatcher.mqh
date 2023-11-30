@@ -8,7 +8,6 @@ private:
 
 public:
     PatternMatcher() {}
-    virtual ~PatternMatcher() {}
     void SetBars(CArrayObj &pbars) { bars = &pbars; }
     int GetBarCount()
     {
