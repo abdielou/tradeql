@@ -1,6 +1,5 @@
 #include <Arrays\ArrayObj.mqh>
 #include "Common.mqh"
-#include "./bar/Bar.mqh"
 #include "./bar/Match.mqh"
 #include "./bar/Trend.mqh"
 #include "./lex/Lexer.mqh"
@@ -12,29 +11,6 @@ class TradeQL
 private:
     CArrayObj *bars;
     Trend trend;
-
-    PinbarFunction customPinbarFunction;
-    ImbalanceFunction customImbalanceFunction;
-
-    bool Imbalance(int index)
-    {
-        if (customImbalanceFunction != NULL)
-        {
-            return customImbalanceFunction(this, index);
-        }
-        Print("WARNING: Imbalance function not implemented");
-        return false;
-    }
-
-    bool Pinbar(int index)
-    {
-        if (customPinbarFunction != NULL)
-        {
-            return customPinbarFunction(this, index);
-        }
-        Print("WARNING: Pinbar function not implemented");
-        return false;
-    }
 
 public:
     TradeQL(CArrayObj &pbars, Trend ptrend)
@@ -72,28 +48,8 @@ public:
         // TODO
     }
 
-    void SetImbalanceFunc(ImbalanceFunction func)
-    {
-        customImbalanceFunction = func;
-    }
-
-    void SetPinbarFunc(PinbarFunction func)
-    {
-        customPinbarFunction = func;
-    }
-
-    Bar *GetBar(int index)
-    {
-        return bars.At(index);
-    }
-
     Trend GetTrend()
     {
         return trend;
-    }
-
-    int GetBarCount()
-    {
-        return bars.Total();
     }
 };

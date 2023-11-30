@@ -1,23 +1,20 @@
-#include "../Include/TradeQL.mqh"
-#include "../Include/Imbalance.mqh"
+#include "../Include/match/ImbalanceMatcher.mqh"
 
 void OnStart()
 {
     // Init
-    Trend bullish = Trend::bullish;
     CArrayObj *bars = new CArrayObj();
     PopulateBars(*bars);
-    TradeQL *tradeQL = new TradeQL(*bars, bullish);
 
     // Test Imbalance
-    bool hasImbalance = Imbalance(tradeQL, 1); // 1 has imbalance
+    ImbalanceMatcher matcher(bars);
+    bool hasImbalance = matcher.IsMatch(1); // 1 has imbalance
     if (!hasImbalance)
         Print("[FAIL] Imbalance test failed");
     else
         Print("[PASS] Imbalance test passed");
 
     // Cleanup
-    delete tradeQL;
     delete bars;
 }
 
