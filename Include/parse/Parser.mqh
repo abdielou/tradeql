@@ -47,23 +47,16 @@ private:
         do
         {
             exprNode = ParseExpression();
-            if (exprNode != NULL)
+            // Check for sequence operator '>'
+            if (exprNode != NULL && GetCurrentToken() != NULL && GetCurrentToken().GetType() == TOKEN_SEQUENCE)
             {
                 sequenceExprNode.AddExpression(exprNode);
-            }
-            else
-            {
-                break;
-            }
-
-            // Check for sequence operator '>'
-            if (GetCurrentToken() != NULL && GetCurrentToken().GetType() == TOKEN_SEQUENCE)
-            {
                 AdvanceToken();
             }
             else
             {
-                break;
+                delete sequenceExprNode;
+                return exprNode;
             }
         } while (true);
 
@@ -119,18 +112,15 @@ public:
         do
         {
             exprNode = ParseBasicExpr();
-            if (exprNode != NULL)
+            if (exprNode != NULL && GetCurrentToken() != NULL && GetCurrentToken().GetType() == TOKEN_ALTERNATION)
             {
                 altExprNode.AddExpression(exprNode);
-            }
-
-            if (GetCurrentToken() != NULL && GetCurrentToken().GetType() == TOKEN_ALTERNATION)
-            {
                 AdvanceToken(); // Consume the '|' token
             }
-            else
+            else if (exprNode != NULL)
             {
-                break;
+                delete altExprNode;
+                return exprNode;
             }
         } while (true);
 
