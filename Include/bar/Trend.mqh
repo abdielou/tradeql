@@ -1,5 +1,5 @@
 enum Trend
 {
-    bullish,
-    bearish
+    TREND_BULLISH,
+    TREND_BEARISH
 };

@@ -41,15 +41,9 @@ public:
 
         // Run the parsed AST against the list of bars
         Matcher matcher(this.bars, this.trend);
-        CArrayObj *matches = new CArrayObj();
-        matcher.Match(result, matches);
+        // TODO
 
         // Return matches and groups
         // TODO
-    }
-
-    Trend GetTrend()
-    {
-        return trend;
     }
 };
