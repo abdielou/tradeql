@@ -8,10 +8,7 @@ public:
     {
         // Validate there's enough data to calculate
         if (index < 1 || index > GetBarCount() - 2)
-        {
-            Print("ERROR: Not enough data to calculate Imbalance at index ", index);
             return false;
-        }
 
         // Get bars
         Bar *target = GetBar(index);
