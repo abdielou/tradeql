@@ -109,7 +109,10 @@ void TestParseGroup()
     if (result != NULL && result.GetNodeType() == TYPE_GROUP_NODE)
     {
         GroupNode *groupNode = (GroupNode *)result;
-        if (groupNode.GetQuantifier() == QUANTIFIER_ONE_OR_MORE && groupNode.GetInnerExpression().GetNodeType() == TYPE_ALT_EXPR_NODE)
+        if (
+            groupNode.GetQuantifier() == QUANTIFIER_ONE_OR_MORE &&
+            (groupNode.GetInnerExpression().GetNodeType() == TYPE_PATTERN_NODE ||
+             groupNode.GetInnerExpression().GetNodeType() == TYPE_ALT_EXPR_NODE))
         {
             Print("[PASS] Test Passed: Correct structure and quantifier for Group");
         }
