@@ -89,7 +89,6 @@ private:
         }
         else
         {
-            AddToken(TOKEN_END);
             return true;
         }
     }
