@@ -112,19 +112,36 @@ public:
         do
         {
             exprNode = ParseBasicExpr();
-            if (exprNode != NULL && GetCurrentToken() != NULL && GetCurrentToken().GetType() == TOKEN_ALTERNATION)
+            if (exprNode != NULL)
             {
-                altExprNode.AddExpression(exprNode);
-                AdvanceToken(); // Consume the '|' token
+                if (GetCurrentToken() != NULL && GetCurrentToken().GetType() == TOKEN_ALTERNATION)
+                {
+                    altExprNode.AddExpression(exprNode);
+                    AdvanceToken();
+                }
+                else if (GetCurrentToken() == NULL && altExprNode.GetExpressions().Total() > 0)
+                {
+                    altExprNode.AddExpression(exprNode);
+                    return altExprNode;
+                }
+                else
+                {
+                    delete altExprNode;
+                    return exprNode;
+                }
             }
-            else if (exprNode != NULL)
-            {
-                delete altExprNode;
-                return exprNode;
-            }
+            else
+                break;
         } while (true);
 
-        return altExprNode.GetExpressions().Total() > 0 ? altExprNode : NULL;
+        if (altExprNode.GetExpressions().Total() == 0)
+        {
+            delete altExprNode;
+            delete exprNode;
+            return NULL;
+        }
+        else
+            return altExprNode;
     }
 
     ASTNode *ParseGroup()
