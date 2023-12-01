@@ -178,15 +178,18 @@ private:
                 sequenceExprNode.AddExpression(exprNode);
                 AdvanceToken();
             }
-            else if (exprNode != NULL)
+            else if (exprNode != NULL && GetCurrentToken() == NULL && sequenceExprNode.GetExpressions().Total() > 0)
             {
                 sequenceExprNode.AddExpression(exprNode);
-                return sequenceExprNode;
-            }
-            else
-            {
                 break;
             }
+            else if (exprNode != NULL && GetCurrentToken() == NULL && sequenceExprNode.GetExpressions().Total() == 0)
+            {
+                delete sequenceExprNode;
+                return exprNode;
+            }
+            else
+                break;
         } while (true);
 
         return sequenceExprNode.GetExpressions().Total() > 0 ? sequenceExprNode : NULL;
