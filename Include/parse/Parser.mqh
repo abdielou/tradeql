@@ -39,38 +39,6 @@ private:
         return type == TOKEN_ZERO_OR_MORE || type == TOKEN_ONE_OR_MORE;
     }
 
-    ASTNode *ParseSequenceExpr()
-    {
-        SequenceExprNode *sequenceExprNode = new SequenceExprNode();
-        ASTNode *exprNode = NULL;
-
-        do
-        {
-            exprNode = ParseExpression();
-            // Check for sequence operator '>'
-            if (exprNode != NULL && GetCurrentToken() != NULL && GetCurrentToken().GetType() == TOKEN_SEQUENCE)
-            {
-                sequenceExprNode.AddExpression(exprNode);
-                AdvanceToken();
-            }
-            else
-            {
-                delete sequenceExprNode;
-                return exprNode;
-            }
-        } while (true);
-
-        return sequenceExprNode.GetExpressions().Total() > 0 ? sequenceExprNode : NULL;
-    }
-
-public:
-    Parser(CArrayObj *tokens) : tokenList(tokens), pos(0) {}
-
-    ASTNode *Parse()
-    {
-        return ParseSequenceExpr();
-    }
-
     // Expression Rules
     ASTNode *ParseBasicExpr()
     {
@@ -194,5 +162,37 @@ public:
         }
 
         return NULL;
+    }
+
+    ASTNode *ParseSequenceExpr()
+    {
+        SequenceExprNode *sequenceExprNode = new SequenceExprNode();
+        ASTNode *exprNode = NULL;
+
+        do
+        {
+            exprNode = ParseExpression();
+            // Check for sequence operator '>'
+            if (exprNode != NULL && GetCurrentToken() != NULL && GetCurrentToken().GetType() == TOKEN_SEQUENCE)
+            {
+                sequenceExprNode.AddExpression(exprNode);
+                AdvanceToken();
+            }
+            else
+            {
+                delete sequenceExprNode;
+                return exprNode;
+            }
+        } while (true);
+
+        return sequenceExprNode.GetExpressions().Total() > 0 ? sequenceExprNode : NULL;
+    }
+
+public:
+    Parser(CArrayObj *tokens) : tokenList(tokens), pos(0) {}
+
+    ASTNode *Parse()
+    {
+        return ParseSequenceExpr();
     }
 };
