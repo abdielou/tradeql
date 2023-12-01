@@ -24,7 +24,6 @@ void TestMatcherWithSimpleBarPattern(string query, Trend trend, PopulateBarsFunc
     CArrayObj *tokens = lexer.GetTokens();
     Parser parser(tokens);
     ASTNode *node = parser.Parse();
-    PatternNode *patternNode = (PatternNode *)node;
 
     CArrayObj *matches = new CArrayObj();
     Matcher matcher(testBars, trend, NULL, new DummyPinbarMatcher());
@@ -66,8 +65,8 @@ void OnStart()
     TestMatcherWithSimpleBarPattern("Bf+", TREND_BULLISH, PopulateBarsWithImbalance, "PopulateBarsWithImbalance", true);
     TestMatcherWithSimpleBarPattern("Bf*", TREND_BULLISH, PopulateBars, "PopulateBars", true);
 
-    // TODO not working
-    // TestMatcherWithSimpleBarPattern("B*>If+", TREND_BULLISH, PopulateBarsWithImbalance, "PopulateBarsWithImbalance", true);
+    // TODO not working. NodeType is incorrect. Returns PatternNode instead of SequenceNode
+    TestMatcherWithSimpleBarPattern("B*>If+", TREND_BULLISH, PopulateBarsWithImbalance, "PopulateBarsWithImbalance", true);
 }
 
 void PopulateBars(CArrayObj &bars)
