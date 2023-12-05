@@ -5,6 +5,7 @@
 #include "../bar/Match.mqh"
 #include "../parse/ast/ASTNode.mqh"
 #include "../parse/ast/PatternNode.mqh"
+#include "../parse/ast/AltExprNode.mqh"
 #include "PatternMatcher.mqh"
 #include "ImbalanceMatcher.mqh"
 
@@ -145,9 +146,33 @@ private:
         return;
     }
 
-    void MatchAltExprNode(ASTNode *node, CArrayObj *matches, int startIndex)
+    void MatchAltExprNode(AltExprNode *node, CArrayObj *matches, int startIndex)
     {
-        Print("WARNING: AltExprNode not implemented");
+        for (int i = 0; i < node.GetExpressions().Total(); ++i)
+        {
+            PatternNode *alternative = (PatternNode *)node.GetExpressions().At(i);
+            CArrayObj *tempMatches = new CArrayObj();
+            MatchPatternNode(alternative, tempMatches, startIndex);
+
+            if (tempMatches.Total() > 0)
+            {
+                AddMatchesToMainList(matches, tempMatches);
+                delete tempMatches;
+                break; // Match found in one of the alternatives, no need to check further
+            }
+            delete tempMatches;
+        }
+        Match *match = (Match *)matches.At(matches.Total() - 1);
+    }
+
+    void AddMatchesToMainList(CArrayObj *mainList, CArrayObj *tempList)
+    {
+        for (int i = 0; i < tempList.Total(); ++i)
+        {
+            Match *tempMatch = (Match *)tempList.At(i);
+            Match *newMatch = new Match(tempMatch.GetStart(), tempMatch.GetEnd());
+            mainList.Add(newMatch);
+        }
     }
 
     void MatchGroupNode(ASTNode *node, CArrayObj *matches, int startIndex)
