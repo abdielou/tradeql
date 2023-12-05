@@ -6,6 +6,7 @@
 #include "../parse/ast/ASTNode.mqh"
 #include "../parse/ast/PatternNode.mqh"
 #include "../parse/ast/AltExprNode.mqh"
+#include "../parse/ast/GroupNode.mqh"
 #include "PatternMatcher.mqh"
 #include "ImbalanceMatcher.mqh"
 
@@ -177,7 +178,23 @@ private:
 
     void MatchGroupNode(ASTNode *node, CArrayObj *matches, int startIndex)
     {
-        Print("WARNING: GroupNode not implemented");
+        GroupNode *groupNode = (GroupNode *)node;
+        ASTNode *innerExpr = groupNode.GetInnerExpression();
+        Quantifier quantifier = groupNode.GetQuantifier();
+
+        if (quantifier == QUANTIFIER_ZERO_OR_MORE)
+        {
+            Print("WARNING: Group with Zero or more quantifier not implemented");
+        }
+        else if (quantifier == QUANTIFIER_ONE_OR_MORE)
+        {
+            Print("WARNING: Group with One or more quantifier not implemented");
+        }
+        else // No quantifier
+        {
+            IsMatch(innerExpr, matches, startIndex);
+        }
+        // TODO add individual group matches
     }
 
     void MatchSequenceExprNode(ASTNode *node, CArrayObj *matches, int startIndex)
