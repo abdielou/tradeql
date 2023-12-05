@@ -1,6 +1,6 @@
 #include <Arrays\ArrayObj.mqh>
 
-class TqlBar : public CObject
+class Bar : public CObject
 {
 public:
     double open;

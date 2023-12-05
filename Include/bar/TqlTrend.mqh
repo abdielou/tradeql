@@ -1,5 +1,0 @@
-enum TqlTrend
-{
-    bullish,
-    bearish
-};

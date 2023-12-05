@@ -13,13 +13,16 @@ void TestParseBasicExpr()
     Parser parser(mockTokens);
 
     // Call ParseBasicExpr and get the result
-    ASTNode *result = parser.ParseBasicExpr();
+    ASTNode *result = parser.Parse();
 
     // Assert the results
     if (result != NULL && result.GetNodeType() == TYPE_PATTERN_NODE)
     {
         PatternNode *patternNode = (PatternNode *)result;
-        if (patternNode.GetPattern() == "I" && patternNode.GetDirection() == "f" && patternNode.GetQuantifier() == "+")
+        if (
+            patternNode.GetPattern() == PATTERN_IMBALANCE &&
+            patternNode.GetDirection() == DIRECTION_FORWARD &&
+            patternNode.GetQuantifier() == QUANTIFIER_ONE_OR_MORE)
         {
             Print("[PASS] Test Passed: Correct pattern, direction, and quantifier for BasicExpr");
         }
@@ -56,7 +59,7 @@ void TestParseAltExpr()
     Parser parser(mockTokens);
 
     // Call ParseAltExpr and get the result
-    ASTNode *result = parser.ParseAltExpr();
+    ASTNode *result = parser.Parse();
 
     // Assert the results
     if (result != NULL && result.GetNodeType() == TYPE_ALT_EXPR_NODE)
@@ -100,13 +103,16 @@ void TestParseGroup()
     Parser parser(mockTokens);
 
     // Call ParseGroup and get the result
-    ASTNode *result = parser.ParseGroup();
+    ASTNode *result = parser.Parse();
 
     // Assert the results
     if (result != NULL && result.GetNodeType() == TYPE_GROUP_NODE)
     {
         GroupNode *groupNode = (GroupNode *)result;
-        if (groupNode.GetQuantifier() == "+" && groupNode.GetInnerExpression().GetNodeType() == TYPE_ALT_EXPR_NODE)
+        if (
+            groupNode.GetQuantifier() == QUANTIFIER_ONE_OR_MORE &&
+            (groupNode.GetInnerExpression().GetNodeType() == TYPE_PATTERN_NODE ||
+             groupNode.GetInnerExpression().GetNodeType() == TYPE_ALT_EXPR_NODE))
         {
             Print("[PASS] Test Passed: Correct structure and quantifier for Group");
         }
@@ -153,8 +159,8 @@ void TestParseExpression()
     Parser groupParser(groupMockTokens);
 
     // Call ParseExpression and get the result
-    ASTNode *altExprResult = altExprParser.ParseExpression();
-    ASTNode *groupResult = groupParser.ParseExpression();
+    ASTNode *altExprResult = altExprParser.Parse();
+    ASTNode *groupResult = groupParser.Parse();
 
     // Assert the results for AltExpr
     if (altExprResult != NULL && altExprResult.GetNodeType() == TYPE_ALT_EXPR_NODE)
@@ -178,7 +184,7 @@ void TestParseExpression()
     if (groupResult != NULL && groupResult.GetNodeType() == TYPE_GROUP_NODE)
     {
         GroupNode *groupNode = (GroupNode *)groupResult;
-        if (groupNode.GetQuantifier() == "+" && groupNode.GetInnerExpression().GetNodeType() == TYPE_ALT_EXPR_NODE)
+        if (groupNode.GetQuantifier() == QUANTIFIER_ONE_OR_MORE && groupNode.GetInnerExpression().GetNodeType() == TYPE_ALT_EXPR_NODE)
         {
             Print("[PASS] Test Passed: Correct structure and quantifier for Expression (Group)");
         }
@@ -221,7 +227,7 @@ void TestParseSequenceExpr()
     // Instantiate the parser with the mock token list
     Parser parser(mockTokens);
 
-    // Call Parse (ParseSequenceExpr is top level) and get the result
+    // Call ParseSequenceExpr and get the result
     ASTNode *result = parser.Parse();
 
     // Assert the results

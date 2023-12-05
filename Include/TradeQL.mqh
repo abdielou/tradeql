@@ -1,74 +1,49 @@
 #include <Arrays\ArrayObj.mqh>
 #include "Common.mqh"
-#include "./bar/TqlBar.mqh"
-#include "./bar/TqlMatch.mqh"
-#include "./bar/TqlTrend.mqh"
+#include "./bar/Match.mqh"
+#include "./bar/Trend.mqh"
+#include "./lex/Lexer.mqh"
+#include "./parse/Parser.mqh"
+#include "./match/Matcher.mqh"
 
 class TradeQL
 {
 private:
     CArrayObj *bars;
-    TqlTrend trend;
-
-    PinbarFunction customPinbarFunction;
-    ImbalanceFunction customImbalanceFunction;
-
-    bool Imbalance(int index)
-    {
-        if (customImbalanceFunction != NULL)
-        {
-            return customImbalanceFunction(this, index);
-        }
-        Print("WARNING: Imbalance function not implemented");
-        return false;
-    }
-
-    bool Pinbar(int index)
-    {
-        if (customPinbarFunction != NULL)
-        {
-            return customPinbarFunction(this, index);
-        }
-        Print("WARNING: Pinbar function not implemented");
-        return false;
-    }
+    Trend trend;
 
 public:
-    TradeQL(CArrayObj &pbars, TqlTrend ptrend)
+    TradeQL(CArrayObj &pbars, Trend ptrend)
     {
         this.bars = &pbars;
         this.trend = ptrend;
     }
 
-    void Match(string query, TqlMatch &match)
+    void Match(string query, Match &match)
     {
-        // TODO: implement
-        Imbalance(1);
-        Pinbar(1);
-    }
+        // Tokenize the query
+        Lexer *lexer = new Lexer(query);
+        CArrayObj *tokens = lexer.GetTokens();
+        if (tokens.Total() == 0)
+        {
+            Print("WARNING: No tokens found");
+            return;
+        }
 
-    void SetImbalanceFunc(ImbalanceFunction func)
-    {
-        customImbalanceFunction = func;
-    }
+        // Parse the tokens into an AST
+        Parser parser(tokens);
+        ASTNode *result = parser.Parse();
+        if (result == NULL)
+        {
+            Print("WARNING: No ASTNode returned");
+            return;
+        }
 
-    void SetPinbarFunc(PinbarFunction func)
-    {
-        customPinbarFunction = func;
-    }
+        // Run the parsed AST against the list of bars
+        Matcher matcher(this.bars, this.trend);
+        // TODO
 
-    TqlBar *GetBar(int index)
-    {
-        return bars.At(index);
-    }
-
-    TqlTrend GetTrend()
-    {
-        return trend;
-    }
-
-    int GetBarCount()
-    {
-        return bars.Total();
+        // Return matches and groups
+        // TODO
     }
 };

@@ -39,37 +39,37 @@ private:
             switch (c)
             {
             case 'I':
-                AddToken(TOKEN_IMBALANCE, (string)c);
+                AddToken(TOKEN_IMBALANCE, ShortToString(c));
                 break;
             case 'B':
-                AddToken(TOKEN_BAR, (string)c);
+                AddToken(TOKEN_BAR, ShortToString(c));
                 break;
             case 'P':
-                AddToken(TOKEN_PINBAR, (string)c);
+                AddToken(TOKEN_PINBAR, ShortToString(c));
                 break;
             case 'f':
-                AddToken(TOKEN_FORWARD, (string)c);
+                AddToken(TOKEN_FORWARD, ShortToString(c));
                 break;
             case 'r':
-                AddToken(TOKEN_REVERSE, (string)c);
+                AddToken(TOKEN_REVERSE, ShortToString(c));
                 break;
             case '*':
-                AddToken(TOKEN_ZERO_OR_MORE, (string)c);
+                AddToken(TOKEN_ZERO_OR_MORE, ShortToString(c));
                 break;
             case '+':
-                AddToken(TOKEN_ONE_OR_MORE, (string)c);
+                AddToken(TOKEN_ONE_OR_MORE, ShortToString(c));
                 break;
             case '|':
-                AddToken(TOKEN_ALTERNATION, (string)c);
+                AddToken(TOKEN_ALTERNATION, ShortToString(c));
                 break;
             case '(':
-                AddToken(TOKEN_GROUP_OPEN, (string)c);
+                AddToken(TOKEN_GROUP_OPEN, ShortToString(c));
                 break;
             case ')':
-                AddToken(TOKEN_GROUP_CLOSE, (string)c);
+                AddToken(TOKEN_GROUP_CLOSE, ShortToString(c));
                 break;
             case '>':
-                AddToken(TOKEN_SEQUENCE, (string)c);
+                AddToken(TOKEN_SEQUENCE, ShortToString(c));
                 break;
             // Unknown or not implemented yet
             // case '{':
@@ -77,7 +77,7 @@ private:
             // case '0-9':
             default:
                 unknownTokenEncountered = true;
-                Print("Not implemented or unknown token ", c, " at position ", position, " in ", inputString);
+                Print("Not implemented or unknown token ", ShortToString(c), " at position ", position, " in ", inputString);
                 break;
             }
         }
@@ -89,7 +89,6 @@ private:
         }
         else
         {
-            AddToken(TOKEN_END);
             return true;
         }
     }

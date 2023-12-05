@@ -9,10 +9,11 @@ void OnStart()
     CArrayObj *expected = new CArrayObj();
     GetTestTokens(expected);
 
-    Lexer *lexer = new Lexer(validQuery);
+    Lexer lexer(validQuery);
     CArrayObj *tokens = lexer.GetTokens();
 
     // Assert valid query
+    bool passAllTokens = true;
     for (int i = 0; i < tokens.Total(); i++)
     {
         Token *token = (Token *)tokens.At(i);
@@ -20,45 +21,40 @@ void OnStart()
         if (token.GetType() != expectedToken.GetType())
         {
             Print("[FAIL] Lexer test failed at index ", i);
-            return;
+            passAllTokens = false;
+            break;
         }
     }
+    if (passAllTokens)
+        Print("[PASS] Lexer test passed for valid query with ", tokens.Total(), " tokens");
 
     // Assert invalid query
-    Lexer *invalidLexer = new Lexer(invalidQuery);
+    Lexer invalidLexer(invalidQuery);
     CArrayObj *invalidTokens = invalidLexer.GetTokens();
     if (invalidTokens.Total() != 0)
-    {
         Print("[FAIL] Lexer test failed at invalid query");
-        return;
-    }
-
-    Print("[PASS] Lexer test passed");
+    else
+        Print("[PASS] Lexer test passed for invalid query");
 
     // Cleanup
     delete expected;
-    delete lexer;
-    delete invalidLexer;
-    delete tokens;
-    delete invalidTokens;
 }
 
 string GetTestQuery()
 {
-    return "I+f>P*f>B+";
+    return "If+>Pf*>B+";
 }
 
 void GetTestTokens(CArrayObj &tokens)
 {
     tokens.Add(new Token(TOKEN_IMBALANCE));    // I
-    tokens.Add(new Token(TOKEN_ONE_OR_MORE));  // +
     tokens.Add(new Token(TOKEN_FORWARD));      // f
+    tokens.Add(new Token(TOKEN_ONE_OR_MORE));  // +
     tokens.Add(new Token(TOKEN_SEQUENCE));     // >
     tokens.Add(new Token(TOKEN_PINBAR));       // P
-    tokens.Add(new Token(TOKEN_ZERO_OR_MORE)); // *
     tokens.Add(new Token(TOKEN_FORWARD));      // f
+    tokens.Add(new Token(TOKEN_ZERO_OR_MORE)); // *
     tokens.Add(new Token(TOKEN_SEQUENCE));     // >
     tokens.Add(new Token(TOKEN_BAR));          // B
     tokens.Add(new Token(TOKEN_ONE_OR_MORE));  // +
-    tokens.Add(new Token(TOKEN_END));          // End of input
 }
