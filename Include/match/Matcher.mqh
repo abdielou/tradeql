@@ -50,8 +50,6 @@ private:
         Match *match = new Match(startIndex);
         for (int i = startIndex; i < bars.Total(); ++i)
         {
-            Bar *bar = (Bar *)bars.At(i);
-
             // Handle pattern
             bool isPatternMatch = false;
             if (node.GetPattern() == PATTERN_IMBALANCE)
@@ -89,57 +87,61 @@ private:
             // Handle quantifier
             if (node.GetQuantifier() == QUANTIFIER_ZERO_OR_MORE)
             {
-                if (isPatternMatch && isDirectionMatch)
+                if (isPatternMatch && isDirectionMatch) // Match found, but continue to grab as many bars as possible
                 {
                     match.SetEnd(i);
                     continue;
                 }
-                else if (match.GetEnd() != -1)
+                else if (match.GetEnd() != -1) // Not a match, but we have a previous match, therefore we are done matching, return
                 {
                     matches.Add(match);
                     return;
                 }
-                else
+                else // Not a match, and we don't have a previous match. Since this is a zero or more quantifier, we can add this as a match and return
                 {
+                    matches.Add(match); // match.end==-1, therefore a zero match
                     return;
                 }
             }
             else if (node.GetQuantifier() == QUANTIFIER_ONE_OR_MORE)
             {
-                if (isPatternMatch && isDirectionMatch)
+                if (isPatternMatch && isDirectionMatch) // Match found, but continue to grab as many bars as possible
                 {
                     match.SetEnd(i);
                     continue;
                 }
-                else if (match.GetEnd() != -1)
+                else if (match.GetEnd() != -1) // Not a match, but we have a previous match, therefore we are done matching, return
                 {
                     matches.Add(match);
                     return;
                 }
-                else
+                else // Not a match, and we don't have a previous match. Since this is a one or more quantifier, we cannot mark this as a match
                 {
-                    if (i == startIndex)
-                        delete match;
+                    delete match;
                     return;
                 }
             }
             else
             {
-                if (isPatternMatch && isDirectionMatch)
+                if (isPatternMatch && isDirectionMatch) // Match found and return since this is a one match quantifier
                 {
                     match.SetEnd(i);
                     matches.Add(match);
+                    return;
                 }
-                else
+                else // Not a match, return as no match found
                 {
-                    if (i == startIndex)
-                        delete match;
+                    delete match;
                     return;
                 }
             }
         }
-        match.SetEnd(bars.Total() - 1);
-        matches.Add(match);
+        // Check if we have matches
+        if (match.GetEnd() != -1)
+        {
+            match.SetEnd(bars.Total() - 1); // We ran out of bars
+            matches.Add(match);
+        }
         return;
     }
 
