@@ -34,7 +34,8 @@ void TestMatcherWithSimpleBarPattern(string query, Trend trend, PopulateBarsFunc
         for (int i = 0; i < matches.Total(); ++i)
         {
             Match *match = (Match *)matches.At(i);
-            Print("Match found at bars ", match.GetStart(), " -> ", match.GetEnd());
+            if (match == NULL)
+                expect = false;
         }
         Print(expect ? "[PASS] " : "[FAIL] ", message, " for ", query);
     }
@@ -61,15 +62,37 @@ void TestMatcherWithSimpleBarPattern(string query, Trend trend, PopulateBarsFunc
 
 void OnStart()
 {
-    TestMatcherWithSimpleBarPattern("Bf+", TREND_BULLISH, PopulateBars, "PopulateBars", true);
-    TestMatcherWithSimpleBarPattern("Bf+", TREND_BULLISH, PopulateBarsWithImbalance, "PopulateBarsWithImbalance", true);
-    TestMatcherWithSimpleBarPattern("Bf*", TREND_BULLISH, PopulateBars, "PopulateBars", true);
-
-    // TODO not working. NodeType is incorrect. Returns PatternNode instead of SequenceNode
-    TestMatcherWithSimpleBarPattern("B*>If+", TREND_BULLISH, PopulateBarsWithImbalance, "PopulateBarsWithImbalance", true);
+    TestMatcherWithSimpleBarPattern("Bf+", TREND_BULLISH, PopulateBarsWithoutImbalance, "SimplePattern 3 bars match", true);
+    TestMatcherWithSimpleBarPattern("Bf+", TREND_BULLISH, PopulateBarsWithImbalance, "SimplePattern one bar match", true);
+    TestMatcherWithSimpleBarPattern("I", TREND_BULLISH, PopulateBarsWithoutImbalance, "SimplePattern no match", false);
+    TestMatcherWithSimpleBarPattern("I|B", TREND_BULLISH, PopulateBarsWithoutImbalance, "Alternation match", true);
 }
 
-void PopulateBars(CArrayObj &bars)
+void PopulateBarsWithoutImbalance(CArrayObj &bars)
+{
+    Bar *bar2 = new Bar();
+    bar2.high = 7;
+    bar2.close = 6;
+    bar2.open = 4;
+    bar2.low = 2;
+    bars.Add(bar2);
+
+    Bar *bar1 = new Bar();
+    bar1.high = 5;
+    bar1.close = 4;
+    bar1.open = 2;
+    bar1.low = 1;
+    bars.Add(bar1);
+
+    Bar *bar0 = new Bar();
+    bar0.high = 3;
+    bar0.close = 2;
+    bar0.open = 1;
+    bar0.low = 0;
+    bars.Add(bar0);
+}
+
+void PopulateBarsWithImbalance(CArrayObj &bars)
 {
     Bar *bar2 = new Bar();
     bar2.high = 7;
@@ -78,17 +101,12 @@ void PopulateBars(CArrayObj &bars)
     bar2.low = 3.5;
     bars.Add(bar2);
 
-    Bar *bar1 = new Bar(); // Has imbalance
+    Bar *bar1 = new Bar();
     bar1.high = 5;
     bar1.close = 4;
     bar1.open = 2;
     bar1.low = 1.5;
     bars.Add(bar1);
-}
-
-void PopulateBarsWithImbalance(CArrayObj &bars)
-{
-    PopulateBars(bars);
 
     Bar *bar0 = new Bar();
     bar0.high = 3;
