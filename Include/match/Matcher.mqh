@@ -46,6 +46,16 @@ private:
         return bar.close > bar.open;
     }
 
+    void AddMatchesToMainList(CArrayObj *mainList, CArrayObj *tempList)
+    {
+        for (int i = 0; i < tempList.Total(); ++i)
+        {
+            Match *tempMatch = (Match *)tempList.At(i);
+            Match *newMatch = new Match(tempMatch.GetStart(), tempMatch.GetEnd());
+            mainList.Add(newMatch);
+        }
+    }
+
     void MatchPatternNode(PatternNode *node, CArrayObj *matches, int startIndex)
     {
         Match *match = new Match(startIndex);
@@ -150,9 +160,9 @@ private:
     {
         for (int i = 0; i < node.GetExpressions().Total(); ++i)
         {
-            PatternNode *alternative = (PatternNode *)node.GetExpressions().At(i);
+            ASTNode *alternative = node.GetExpressions().At(i);
             CArrayObj *tempMatches = new CArrayObj();
-            MatchPatternNode(alternative, tempMatches, startIndex);
+            IsMatch(alternative, tempMatches, startIndex);
 
             if (tempMatches.Total() > 0)
             {
@@ -163,16 +173,6 @@ private:
             delete tempMatches;
         }
         Match *match = (Match *)matches.At(matches.Total() - 1);
-    }
-
-    void AddMatchesToMainList(CArrayObj *mainList, CArrayObj *tempList)
-    {
-        for (int i = 0; i < tempList.Total(); ++i)
-        {
-            Match *tempMatch = (Match *)tempList.At(i);
-            Match *newMatch = new Match(tempMatch.GetStart(), tempMatch.GetEnd());
-            mainList.Add(newMatch);
-        }
     }
 
     void MatchGroupNode(ASTNode *node, CArrayObj *matches, int startIndex)
@@ -205,7 +205,7 @@ public:
             delete pinMatcher;
     }
 
-    void IsMatch(ASTNode *node, CArrayObj *matches)
+    void IsMatch(ASTNode *node, CArrayObj *matches, int startIndex = 0)
     {
         switch (node.GetNodeType())
         {
