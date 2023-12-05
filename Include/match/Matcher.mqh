@@ -45,7 +45,7 @@ private:
         return bar.close > bar.open;
     }
 
-    int MatchPatternNode(PatternNode *node, CArrayObj *matches, int startIndex)
+    void MatchPatternNode(PatternNode *node, CArrayObj *matches, int startIndex)
     {
         Match *match = new Match(startIndex);
         for (int i = startIndex; i < bars.Total(); ++i)
@@ -97,11 +97,11 @@ private:
                 else if (match.GetEnd() != -1)
                 {
                     matches.Add(match);
-                    return i;
+                    return;
                 }
                 else
                 {
-                    return i;
+                    return;
                 }
             }
             else if (node.GetQuantifier() == QUANTIFIER_ONE_OR_MORE)
@@ -114,13 +114,13 @@ private:
                 else if (match.GetEnd() != -1)
                 {
                     matches.Add(match);
-                    return match.GetEnd();
+                    return;
                 }
                 else
                 {
                     if (i == startIndex)
                         delete match;
-                    return i;
+                    return;
                 }
             }
             else
@@ -134,13 +134,13 @@ private:
                 {
                     if (i == startIndex)
                         delete match;
-                    return i;
+                    return;
                 }
             }
         }
         match.SetEnd(bars.Total() - 1);
         matches.Add(match);
-        return bars.Total() - 1;
+        return;
     }
 
     void MatchAltExprNode(ASTNode *node, CArrayObj *matches, int startIndex)
