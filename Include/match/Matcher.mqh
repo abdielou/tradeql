@@ -180,11 +180,10 @@ private:
         Match *match = (Match *)matches.At(matches.Total() - 1);
     }
 
-    void MatchGroupNode(ASTNode *node, CArrayObj *matches, int startIndex)
+    void MatchGroupNode(GroupNode *node, CArrayObj *matches, int startIndex)
     {
-        GroupNode *groupNode = (GroupNode *)node;
-        ASTNode *innerExpr = groupNode.GetInnerExpression();
-        Quantifier quantifier = groupNode.GetQuantifier();
+        ASTNode *innerExpr = node.GetInnerExpression();
+        Quantifier quantifier = node.GetQuantifier();
         CArrayObj *tempMatches = new CArrayObj(); // Hold group matches to later join into a single match
 
         if (quantifier == QUANTIFIER_ZERO_OR_MORE || quantifier == QUANTIFIER_ONE_OR_MORE)
@@ -233,7 +232,7 @@ private:
         delete tempMatches;
     }
 
-    void MatchSequenceExprNode(ASTNode *node, CArrayObj *matches, int startIndex)
+    void MatchSequenceExprNode(SequenceExprNode *node, CArrayObj *matches, int startIndex)
     {
         Print("WARNING: SequenceExprNode not implemented");
     }
