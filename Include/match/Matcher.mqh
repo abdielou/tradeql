@@ -53,7 +53,7 @@ private:
         for (int i = 0; i < tempList.Total(); ++i)
         {
             Match *tempMatch = (Match *)tempList.At(i);
-            Match *newMatch = new Match(tempMatch.GetStart(), tempMatch.GetEnd());
+            Match *newMatch = new Match(tempMatch.GetStart(), tempMatch.GetEnd(), tempMatch.IsGroupMatch());
             mainList.Add(newMatch);
         }
     }
@@ -221,7 +221,19 @@ private:
             Match *firstMatch = (Match *)tempMatches.At(0);
             Match *lastMatch = (Match *)tempMatches.At(tempMatches.Total() - 1);
             Match *groupMatch = new Match(firstMatch.GetStart(), lastMatch.GetEnd());
+            groupMatch.SetGroupMatch(true);
             matches.Add(groupMatch);
+
+            // Keep any group match in tempMatches
+            for (int i = 0; i < tempMatches.Total(); ++i)
+            {
+                Match *tempMatch = (Match *)tempMatches.At(i);
+                if (tempMatch.IsGroupMatch())
+                {
+                    Match *newMatch = new Match(tempMatch.GetStart(), tempMatch.GetEnd());
+                    matches.Add(newMatch);
+                }
+            }
         }
         else if (quantifier == QUANTIFIER_ZERO_OR_MORE) // Add a zero match
         {
@@ -269,6 +281,17 @@ private:
             Match *lastMatch = (Match *)tempMatches.At(tempMatches.Total() - 1);
             Match *sequenceMatch = new Match(firstMatch.GetStart(), lastMatch.GetEnd());
             matches.Add(sequenceMatch);
+
+            // Keep any group match in tempMatches
+            for (int i = 0; i < tempMatches.Total(); ++i)
+            {
+                Match *tempMatch = (Match *)tempMatches.At(i);
+                if (tempMatch.IsGroupMatch())
+                {
+                    Match *newMatch = new Match(tempMatch.GetStart(), tempMatch.GetEnd());
+                    matches.Add(newMatch);
+                }
+            }
         }
         delete tempMatches;
     }

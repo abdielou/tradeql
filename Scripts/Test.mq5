@@ -34,7 +34,11 @@ void TestPatterns(string query, Trend trend, PopulateBarsFunc populate, string m
             else if (match.IsZeroMatch())
                 Print("Zero Match");
             else
-                Print("Match: ", match.GetStart(), " to ", match.GetEnd());
+            {
+                Bar *startBar = (Bar *)testBars.At(match.GetStart());
+                Bar *endBar = (Bar *)testBars.At(match.GetEnd());
+                Print(i == 0 ? "Match: " : "  Sub-Match: ", "[", match.GetEnd(), ",", TimeToString(endBar.time), "] to [", match.GetStart(), ",", TimeToString(startBar.time), "]");
+            }
         }
         Print(expect ? "[PASS] " : "[FAIL] ", message, " for ", query);
     }
@@ -79,6 +83,9 @@ void OnStart()
     // Sequence
     TestPatterns("B>I>B", TREND_BULLISH, PopulateBarsWithImbalance, "Sequence match", true);
     TestPatterns("B>I>B", TREND_BULLISH, PopulateBarsWithoutImbalance, "Sequence no match", false);
+
+    // Real Data
+    TestPatterns("B+>(Ir)>B+>(Ir)>B+", TREND_BULLISH, PopulateBarsWithRealData, "Real data match", true);
 }
 
 void PopulateBarsWithoutImbalance(CArrayObj &bars)
@@ -127,4 +134,19 @@ void PopulateBarsWithImbalance(CArrayObj &bars)
     bar0.open = 1;
     bar0.low = 0;
     bars.Add(bar0);
+}
+
+void PopulateBarsWithRealData(CArrayObj &bars)
+{
+    int count = 20;
+    for (int i = 0; i < count; ++i)
+    {
+        Bar *bar = new Bar();
+        bar.high = iHigh(Symbol(), Period(), i);
+        bar.close = iClose(Symbol(), Period(), i);
+        bar.open = iOpen(Symbol(), Period(), i);
+        bar.low = iLow(Symbol(), Period(), i);
+        bar.time = iTime(Symbol(), Period(), i);
+        bars.Add(bar);
+    }
 }

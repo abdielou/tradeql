@@ -7,4 +7,5 @@ public:
     double close;
     double high;
     double low;
+    datetime time;
 };
