@@ -7,6 +7,7 @@
 #include "../parse/ast/PatternNode.mqh"
 #include "../parse/ast/AltExprNode.mqh"
 #include "../parse/ast/GroupNode.mqh"
+#include "../parse/ast/SequenceExprNode.mqh"
 #include "PatternMatcher.mqh"
 #include "ImbalanceMatcher.mqh"
 
@@ -234,7 +235,42 @@ private:
 
     void MatchSequenceExprNode(SequenceExprNode *node, CArrayObj *matches, int startIndex)
     {
-        Print("WARNING: SequenceExprNode not implemented");
+        int currentIndex = startIndex;
+        bool sequenceFullyMatched = true;
+
+        CArrayObj *tempMatches = new CArrayObj(); // Hold sequence matches to later join into a single match
+
+        for (int i = 0; i < node.GetExpressions().Total(); ++i) // Iterate through all expressions in the sequence
+        {
+            ASTNode *expr = node.GetExpressions().At(i);
+            CArrayObj *innerMatches = new CArrayObj();
+
+            IsMatch(expr, innerMatches, currentIndex);
+
+            if (innerMatches.Total() > 0) // Expression matched, continue to next expression
+            {
+                AddMatchesToMainList(tempMatches, innerMatches);
+                Match *lastMatch = (Match *)innerMatches.At(innerMatches.Total() - 1);
+                currentIndex = lastMatch.GetEnd() + 1;
+            }
+            else // No match, therefore sequence not matched
+            {
+                sequenceFullyMatched = false;
+                delete innerMatches;
+                break;
+            }
+
+            delete innerMatches;
+        }
+
+        if (sequenceFullyMatched) // Join matches into a single match
+        {
+            Match *firstMatch = (Match *)tempMatches.At(0);
+            Match *lastMatch = (Match *)tempMatches.At(tempMatches.Total() - 1);
+            Match *sequenceMatch = new Match(firstMatch.GetStart(), lastMatch.GetEnd());
+            matches.Add(sequenceMatch);
+        }
+        delete tempMatches;
     }
 
 public:

@@ -84,6 +84,7 @@ void OnStart()
 
     // Sequence
     TestMatcherWithSimpleBarPattern("B>I>B", TREND_BULLISH, PopulateBarsWithImbalance, "Sequence match", true);
+    TestMatcherWithSimpleBarPattern("B>I>B", TREND_BULLISH, PopulateBarsWithoutImbalance, "Sequence no match", false);
 }
 
 void PopulateBarsWithoutImbalance(CArrayObj &bars)
