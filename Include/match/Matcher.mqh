@@ -6,6 +6,7 @@
 #include "../parse/ast/ASTNode.mqh"
 #include "../parse/ast/PatternNode.mqh"
 #include "../parse/ast/AltExprNode.mqh"
+#include "../parse/ast/GroupNode.mqh"
 #include "PatternMatcher.mqh"
 #include "ImbalanceMatcher.mqh"
 
@@ -44,6 +45,16 @@ private:
         if (bar == NULL)
             return false;
         return bar.close > bar.open;
+    }
+
+    void AddMatchesToMainList(CArrayObj *mainList, CArrayObj *tempList)
+    {
+        for (int i = 0; i < tempList.Total(); ++i)
+        {
+            Match *tempMatch = (Match *)tempList.At(i);
+            Match *newMatch = new Match(tempMatch.GetStart(), tempMatch.GetEnd());
+            mainList.Add(newMatch);
+        }
     }
 
     void MatchPatternNode(PatternNode *node, CArrayObj *matches, int startIndex)
@@ -143,6 +154,10 @@ private:
             match.SetEnd(bars.Total() - 1); // We ran out of bars
             matches.Add(match);
         }
+        else
+        {
+            delete match;
+        }
         return;
     }
 
@@ -150,9 +165,9 @@ private:
     {
         for (int i = 0; i < node.GetExpressions().Total(); ++i)
         {
-            PatternNode *alternative = (PatternNode *)node.GetExpressions().At(i);
+            ASTNode *alternative = node.GetExpressions().At(i);
             CArrayObj *tempMatches = new CArrayObj();
-            MatchPatternNode(alternative, tempMatches, startIndex);
+            IsMatch(alternative, tempMatches, startIndex);
 
             if (tempMatches.Total() > 0)
             {
@@ -165,19 +180,57 @@ private:
         Match *match = (Match *)matches.At(matches.Total() - 1);
     }
 
-    void AddMatchesToMainList(CArrayObj *mainList, CArrayObj *tempList)
-    {
-        for (int i = 0; i < tempList.Total(); ++i)
-        {
-            Match *tempMatch = (Match *)tempList.At(i);
-            Match *newMatch = new Match(tempMatch.GetStart(), tempMatch.GetEnd());
-            mainList.Add(newMatch);
-        }
-    }
-
     void MatchGroupNode(ASTNode *node, CArrayObj *matches, int startIndex)
     {
-        Print("WARNING: GroupNode not implemented");
+        GroupNode *groupNode = (GroupNode *)node;
+        ASTNode *innerExpr = groupNode.GetInnerExpression();
+        Quantifier quantifier = groupNode.GetQuantifier();
+        CArrayObj *tempMatches = new CArrayObj(); // Hold group matches to later join into a single match
+
+        if (quantifier == QUANTIFIER_ZERO_OR_MORE || quantifier == QUANTIFIER_ONE_OR_MORE)
+        {
+            int currentIndex = startIndex;
+            while (currentIndex < bars.Total())
+            {
+                CArrayObj *innerMatches = new CArrayObj();
+                IsMatch(innerExpr, innerMatches, currentIndex);
+
+                if (innerMatches.Total() > 0)
+                {
+                    // Add all matches from innerMatches to tempMatches
+                    AddMatchesToMainList(tempMatches, innerMatches);
+                    Match *lastMatch = (Match *)innerMatches.At(innerMatches.Total() - 1);
+                    currentIndex = lastMatch.GetEnd() + 1;
+                }
+                else
+                {
+                    delete innerMatches;
+                    break;
+                }
+
+                delete innerMatches;
+            }
+        }
+        else
+        {
+            IsMatch(innerExpr, tempMatches, startIndex);
+        }
+
+        if (tempMatches.Total() > 0) // Join matches into a single match
+        {
+            Match *firstMatch = (Match *)tempMatches.At(0);
+            Match *lastMatch = (Match *)tempMatches.At(tempMatches.Total() - 1);
+            Match *groupMatch = new Match(firstMatch.GetStart(), lastMatch.GetEnd());
+            matches.Add(groupMatch);
+        }
+        else if (quantifier == QUANTIFIER_ZERO_OR_MORE) // Add a zero match
+        {
+            Match *zeroMatch = new Match(startIndex, startIndex - 1);
+            matches.Add(zeroMatch);
+        }
+
+        // Cleanup
+        delete tempMatches;
     }
 
     void MatchSequenceExprNode(ASTNode *node, CArrayObj *matches, int startIndex)
@@ -205,21 +258,21 @@ public:
             delete pinMatcher;
     }
 
-    void IsMatch(ASTNode *node, CArrayObj *matches)
+    void IsMatch(ASTNode *node, CArrayObj *matches, int startIndex = 0)
     {
         switch (node.GetNodeType())
         {
         case TYPE_SEQUENCE_EXPR_NODE:
-            MatchSequenceExprNode(node, matches, 0);
+            MatchSequenceExprNode(node, matches, startIndex);
             break;
         case TYPE_GROUP_NODE:
-            MatchGroupNode(node, matches, 0);
+            MatchGroupNode(node, matches, startIndex);
             break;
         case TYPE_ALT_EXPR_NODE:
-            MatchAltExprNode(node, matches, 0);
+            MatchAltExprNode(node, matches, startIndex);
             break;
         case TYPE_PATTERN_NODE:
-            MatchPatternNode(node, matches, 0);
+            MatchPatternNode(node, matches, startIndex);
             break;
         default:
             Print("WARNING: Unknown node type");
