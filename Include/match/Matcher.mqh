@@ -227,16 +227,16 @@ public:
         switch (node.GetNodeType())
         {
         case TYPE_SEQUENCE_EXPR_NODE:
-            MatchSequenceExprNode(node, matches, 0);
+            MatchSequenceExprNode(node, matches, startIndex);
             break;
         case TYPE_GROUP_NODE:
-            MatchGroupNode(node, matches, 0);
+            MatchGroupNode(node, matches, startIndex);
             break;
         case TYPE_ALT_EXPR_NODE:
-            MatchAltExprNode(node, matches, 0);
+            MatchAltExprNode(node, matches, startIndex);
             break;
         case TYPE_PATTERN_NODE:
-            MatchPatternNode(node, matches, 0);
+            MatchPatternNode(node, matches, startIndex);
             break;
         default:
             Print("WARNING: Unknown node type");
