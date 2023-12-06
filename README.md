@@ -4,7 +4,7 @@
 
 ## Introduction
 
-Here we present a Domain-Specific Language (DSL) designed specifically for the concise and precise description of trading patterns observed in candlestick charts. This DSL enables traders and analysts to articulate complex trading scenarios with a level of clarity and brevity akin to regular expressions used in programming. By standardizing the way these patterns are described, this language aims to facilitate clearer communication and analysis within the trading community.
+Here we present a Domain-Specific Language (DSL) designed specifically for the description of trading patterns in candlestick charts. This DSL enables traders and analysts to articulate trading scenarios with a level clarity and brevity similar to regular expressions used in programming.
 
 ## Basic Elements
 
