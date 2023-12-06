@@ -36,6 +36,8 @@ void TestMatcherWithSimpleBarPattern(string query, Trend trend, PopulateBarsFunc
             Match *match = (Match *)matches.At(i);
             if (match == NULL)
                 expect = false;
+            else if (match.IsZeroMatch())
+                Print("Zero Match");
             else
                 Print("Match: ", match.GetStart(), " to ", match.GetEnd());
         }
@@ -65,11 +67,15 @@ void TestMatcherWithSimpleBarPattern(string query, Trend trend, PopulateBarsFunc
 void OnStart()
 {
     TestMatcherWithSimpleBarPattern("Bf+", TREND_BULLISH, PopulateBarsWithoutImbalance, "SimplePattern 3 bars match", true);
+    TestMatcherWithSimpleBarPattern("Br*", TREND_BULLISH, PopulateBarsWithoutImbalance, "SimplePattern zero match", true);
     TestMatcherWithSimpleBarPattern("Bf+", TREND_BULLISH, PopulateBarsWithImbalance, "SimplePattern one bar match", true);
     TestMatcherWithSimpleBarPattern("I", TREND_BULLISH, PopulateBarsWithoutImbalance, "SimplePattern no match", false);
     TestMatcherWithSimpleBarPattern("I|B", TREND_BULLISH, PopulateBarsWithoutImbalance, "Alternation match", true);
     TestMatcherWithSimpleBarPattern("(Ir+|Bf+)", TREND_BULLISH, PopulateBarsWithoutImbalance, "Group match", true);
     TestMatcherWithSimpleBarPattern("(I|B)*", TREND_BULLISH, PopulateBarsWithoutImbalance, "Group zero or more match", true);
+    TestMatcherWithSimpleBarPattern("(I|Br)*", TREND_BULLISH, PopulateBarsWithoutImbalance, "Group zero match", true);
+    TestMatcherWithSimpleBarPattern("(I|B)+", TREND_BULLISH, PopulateBarsWithoutImbalance, "Group zero or more match", true);
+    TestMatcherWithSimpleBarPattern("(I|Br)+", TREND_BULLISH, PopulateBarsWithoutImbalance, "Group zero or more no match", false);
 }
 
 void PopulateBarsWithoutImbalance(CArrayObj &bars)
