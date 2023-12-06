@@ -66,16 +66,24 @@ void TestMatcherWithSimpleBarPattern(string query, Trend trend, PopulateBarsFunc
 
 void OnStart()
 {
+    // Pattern
     TestMatcherWithSimpleBarPattern("Bf+", TREND_BULLISH, PopulateBarsWithoutImbalance, "SimplePattern 3 bars match", true);
     TestMatcherWithSimpleBarPattern("Br*", TREND_BULLISH, PopulateBarsWithoutImbalance, "SimplePattern zero match", true);
     TestMatcherWithSimpleBarPattern("Bf+", TREND_BULLISH, PopulateBarsWithImbalance, "SimplePattern one bar match", true);
     TestMatcherWithSimpleBarPattern("I", TREND_BULLISH, PopulateBarsWithoutImbalance, "SimplePattern no match", false);
+
+    // Alternation
     TestMatcherWithSimpleBarPattern("I|B", TREND_BULLISH, PopulateBarsWithoutImbalance, "Alternation match", true);
+
+    // Group
     TestMatcherWithSimpleBarPattern("(Ir+|Bf+)", TREND_BULLISH, PopulateBarsWithoutImbalance, "Group match", true);
     TestMatcherWithSimpleBarPattern("(I|B)*", TREND_BULLISH, PopulateBarsWithoutImbalance, "Group zero or more match", true);
     TestMatcherWithSimpleBarPattern("(I|Br)*", TREND_BULLISH, PopulateBarsWithoutImbalance, "Group zero match", true);
     TestMatcherWithSimpleBarPattern("(I|B)+", TREND_BULLISH, PopulateBarsWithoutImbalance, "Group zero or more match", true);
     TestMatcherWithSimpleBarPattern("(I|Br)+", TREND_BULLISH, PopulateBarsWithoutImbalance, "Group zero or more no match", false);
+
+    // Sequence
+    TestMatcherWithSimpleBarPattern("B>I>B", TREND_BULLISH, PopulateBarsWithImbalance, "Sequence match", true);
 }
 
 void PopulateBarsWithoutImbalance(CArrayObj &bars)
