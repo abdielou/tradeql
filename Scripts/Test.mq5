@@ -1,7 +1,5 @@
-#include "../Include/lex/Lexer.mqh"
-#include "../Include/parse/Parser.mqh"
-#include "../Include/match/Matcher.mqh"
 #include "../Include/Util.mqh"
+#include "../Libraries/TradeQL.mqh"
 
 class DummyPinbarMatcher : public PatternMatcher
 {
@@ -17,17 +15,14 @@ typedef void (*PopulateBarsFunc)(CArrayObj &bars);
 
 void TestPatterns(string query, Trend trend, PopulateBarsFunc populate, string message, bool expect)
 {
+    // Test bars
     CArrayObj *testBars = new CArrayObj();
     populate(*testBars);
 
-    Lexer lexer(query);
-    CArrayObj *tokens = lexer.GetTokens();
-    Parser parser(tokens);
-    ASTNode *node = parser.Parse();
-
+    // Match
+    TradeQL tradeQL(testBars, trend, NULL, new DummyPinbarMatcher());
     CArrayObj *matches = new CArrayObj();
-    Matcher matcher(testBars, trend, NULL, new DummyPinbarMatcher());
-    matcher.IsMatch(node, matches);
+    tradeQL.Match(query, matches);
 
     if (matches.Total() > 0)
     {
@@ -61,7 +56,6 @@ void TestPatterns(string query, Trend trend, PopulateBarsFunc populate, string m
         delete bar;
     }
     delete testBars;
-    delete node;
 }
 
 void OnStart()
