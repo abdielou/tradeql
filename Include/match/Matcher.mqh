@@ -154,6 +154,10 @@ private:
             match.SetEnd(bars.Total() - 1); // We ran out of bars
             matches.Add(match);
         }
+        else
+        {
+            delete match;
+        }
         return;
     }
 
@@ -184,17 +188,37 @@ private:
 
         if (quantifier == QUANTIFIER_ZERO_OR_MORE)
         {
-            Print("WARNING: Group with Zero or more quantifier not implemented");
+            int currentIndex = startIndex;
+            while (currentIndex <= bars.Total())
+            {
+                CArrayObj *tempMatches = new CArrayObj();
+                IsMatch(innerExpr, tempMatches, currentIndex);
+
+                if (tempMatches.Total() > 0) // Add match
+                {
+                    AddMatchesToMainList(matches, tempMatches);
+                    delete tempMatches;
+                    Match *lastMatch = (Match *)matches.At(matches.Total() - 1);
+                    currentIndex = lastMatch.GetEnd() + 1; // Continue looking for more at last index
+                }
+                else
+                {
+                    // No more matches found
+                    delete tempMatches;
+                    break;
+                }
+            }
         }
         else if (quantifier == QUANTIFIER_ONE_OR_MORE)
         {
-            Print("WARNING: Group with One or more quantifier not implemented");
+            Print("WARNING: One or more quantifier not implemented");
+            // TODO
         }
         else // No quantifier
         {
             IsMatch(innerExpr, matches, startIndex);
         }
-        // TODO add individual group matches
+        // TODO All matches here are for a single group expression. Therefore we must combine them into a single match
     }
 
     void MatchSequenceExprNode(ASTNode *node, CArrayObj *matches, int startIndex)
