@@ -185,42 +185,52 @@ private:
         GroupNode *groupNode = (GroupNode *)node;
         ASTNode *innerExpr = groupNode.GetInnerExpression();
         Quantifier quantifier = groupNode.GetQuantifier();
+        CArrayObj *tempMatches = new CArrayObj(); // Hold group matches to later join into a single match
 
         if (quantifier == QUANTIFIER_ZERO_OR_MORE || quantifier == QUANTIFIER_ONE_OR_MORE)
         {
             int currentIndex = startIndex;
             while (currentIndex < bars.Total())
             {
-                CArrayObj *tempMatches = new CArrayObj();
-                IsMatch(innerExpr, tempMatches, currentIndex);
+                CArrayObj *innerMatches = new CArrayObj();
+                IsMatch(innerExpr, innerMatches, currentIndex);
 
-                if (tempMatches.Total() > 0) // Add match
+                if (innerMatches.Total() > 0)
                 {
-                    AddMatchesToMainList(matches, tempMatches);
-                    delete tempMatches;
-                    Match *lastMatch = (Match *)matches.At(matches.Total() - 1);
-                    currentIndex = lastMatch.GetEnd() + 1; // Continue looking for more at last index
+                    // Add all matches from innerMatches to tempMatches
+                    AddMatchesToMainList(tempMatches, innerMatches);
+                    Match *lastMatch = (Match *)innerMatches.At(innerMatches.Total() - 1);
+                    currentIndex = lastMatch.GetEnd() + 1;
                 }
                 else
                 {
-                    // No more matches found
-                    delete tempMatches;
+                    delete innerMatches;
                     break;
                 }
-            }
 
-            // If there are no matches, add a zero match
-            if (matches.Total() == 0 && quantifier == QUANTIFIER_ZERO_OR_MORE)
-            {
-                Match *zeroMatch = new Match(startIndex);
-                matches.Add(zeroMatch);
+                delete innerMatches;
             }
         }
-        else // No quantifier
+        else
         {
-            IsMatch(innerExpr, matches, startIndex);
+            IsMatch(innerExpr, tempMatches, startIndex);
         }
-        // TODO All matches here are for a single group expression. Therefore we must combine them into a single match
+
+        if (tempMatches.Total() > 0) // Join matches into a single match
+        {
+            Match *firstMatch = (Match *)tempMatches.At(0);
+            Match *lastMatch = (Match *)tempMatches.At(tempMatches.Total() - 1);
+            Match *groupMatch = new Match(firstMatch.GetStart(), lastMatch.GetEnd());
+            matches.Add(groupMatch);
+        }
+        else if (quantifier == QUANTIFIER_ZERO_OR_MORE) // Add a zero match
+        {
+            Match *zeroMatch = new Match(startIndex, startIndex - 1);
+            matches.Add(zeroMatch);
+        }
+
+        // Cleanup
+        delete tempMatches;
     }
 
     void MatchSequenceExprNode(ASTNode *node, CArrayObj *matches, int startIndex)
