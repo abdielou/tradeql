@@ -186,10 +186,10 @@ private:
         ASTNode *innerExpr = groupNode.GetInnerExpression();
         Quantifier quantifier = groupNode.GetQuantifier();
 
-        if (quantifier == QUANTIFIER_ZERO_OR_MORE)
+        if (quantifier == QUANTIFIER_ZERO_OR_MORE || quantifier == QUANTIFIER_ONE_OR_MORE)
         {
             int currentIndex = startIndex;
-            while (currentIndex <= bars.Total())
+            while (currentIndex < bars.Total())
             {
                 CArrayObj *tempMatches = new CArrayObj();
                 IsMatch(innerExpr, tempMatches, currentIndex);
@@ -208,11 +208,13 @@ private:
                     break;
                 }
             }
-        }
-        else if (quantifier == QUANTIFIER_ONE_OR_MORE)
-        {
-            Print("WARNING: One or more quantifier not implemented");
-            // TODO
+
+            // If there are no matches, add a zero match
+            if (matches.Total() == 0 && quantifier == QUANTIFIER_ZERO_OR_MORE)
+            {
+                Match *zeroMatch = new Match(startIndex);
+                matches.Add(zeroMatch);
+            }
         }
         else // No quantifier
         {
