@@ -175,3 +175,43 @@ TradeQL provides a few key utility functions within its framework to facilitate 
 - **Functionality:** Retrieves the current market trend being used in the TradeQL analysis.
 - **Return Type:** `Trend`, which is a string value, typically either 'bullish' or 'bearish'.
 - **Usage:** This function is used to obtain the trend context in which the TradeQL analysis is being performed.
+
+# Implementation
+
+## MQL4/5 Usage
+
+To use, first initialize a array of `Bar` objects with your data.
+Then instantiate a `TradeQL` object with the bars and trend.
+Finally, execute the query with the `Match` function.
+The first match is the full match, and subsequent matches are captured groups if defined in the query.
+
+```c++
+#include <TradeQL.mqh>
+
+void OnStart() {
+    // Define the bars and trend
+    CArrayObj *bars = ...; // Initialize with your bar data
+    Trend trend = TREND_BULLISH; // or TREND_BEARISH
+
+    // Instantiate TradeQL
+    TradeQL tradeQL(bars, trend);
+
+    // Define a TradeQL query
+    string query = "B+>(If+)";
+
+    // Execute the query
+    CArrayObj *matches = new CArrayObj();
+    tradeQL.Match(query, matches);
+
+    // Process the results
+    for (int i = 0; i < matches.Total(); i++) {
+        Match *match = (Match *)matches.At(i);
+        Print("Match from bar ", match.GetStart(), " to bar ", match.GetEnd());
+    }
+
+    // Cleanup
+    delete matches;
+}
+```
+
+More examples can be found in the `Scripts` folder.
