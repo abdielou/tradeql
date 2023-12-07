@@ -1,4 +1,4 @@
-# TradeQL `v0.1.0`
+# TradeQL
 
 > A regex-inspired query language for the description and analysis of candlestick chart patterns in trading.
 
@@ -214,4 +214,4 @@ void OnStart() {
 }
 ```
 
-More examples can be found in the `Scripts` folder.
+More examples can be found in the [`/Scripts`](Scripts/) folder.

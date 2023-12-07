@@ -6,7 +6,7 @@
 #property description "TradeQL: Regex like DSL for trading patterns"
 #property copyright "Mozart Analytics FX LLC"
 #property link "https://www.mozartanalytics.com"
-#property icon "\\Images\\abdielou\\mozart.ico"
+#property icon "../Images/mozart.ico"
 #property version "1.00"
 #property strict
 
