@@ -214,4 +214,4 @@ void OnStart() {
 }
 ```
 
-More examples can be found in the `Scripts` folder.
+More examples can be found in the [`/Scripts`](Scripts/) folder.
