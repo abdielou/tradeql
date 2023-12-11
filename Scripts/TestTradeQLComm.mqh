@@ -1,5 +1,5 @@
-#include "../Include/Util.mqh"
-#include "../Include/TradeQL.mqh"
+#include "../Include/tradeql/Util.mqh"
+#include "../Include/tradeql/TradeQL.mqh"
 
 class DummyPinbarMatcher : public PatternMatcher
 {

@@ -1,7 +1,7 @@
-#include "../Include/lex/Lexer.mqh"
-#include "../Include/parse/Parser.mqh"
-#include "../Include/match/Matcher.mqh"
-#include "../Include/Util.mqh"
+#include "../Include/tradeql/lex/Lexer.mqh"
+#include "../Include/tradeql/parse/Parser.mqh"
+#include "../Include/tradeql/match/Matcher.mqh"
+#include "../Include/tradeql/Util.mqh"
 
 class DummyPinbarMatcher : public PatternMatcher
 {

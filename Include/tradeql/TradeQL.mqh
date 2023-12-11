@@ -1,10 +1,10 @@
 #include <Arrays\ArrayObj.mqh>
-#include "../Include/Common.mqh"
-#include "../Include/bar/Match.mqh"
-#include "../Include/bar/Trend.mqh"
-#include "../Include/lex/Lexer.mqh"
-#include "../Include/parse/Parser.mqh"
-#include "../Include/match/Matcher.mqh"
+#include "Common.mqh"
+#include "bar/Match.mqh"
+#include "bar/Trend.mqh"
+#include "lex/Lexer.mqh"
+#include "parse/Parser.mqh"
+#include "match/Matcher.mqh"
 
 class TradeQL
 {

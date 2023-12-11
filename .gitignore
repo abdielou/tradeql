@@ -1,3 +1,30 @@
+# Basic
+!.gitignore
+!README.md
+!.vscode/
 .vscode/*
-*.ex5
+!.vscode/c_cpp_properties.json
+*.log
 *.ex4
+*.ex5
+
+# Include
+!Include/
+Include/*
+!Include/tradeql/
+
+# Scripts
+!Scripts/
+Scripts/Examples
+Scripts/UnitTests
+
+# Other
+Experts
+Indicators
+Libraries
+Profiles
+Files
+Images
+Services
+Shared Projects
+Logs
