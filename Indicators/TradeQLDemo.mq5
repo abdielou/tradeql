@@ -148,33 +148,27 @@ void PrintMatch(Match *match, CArrayObj *bars, int i)
 void DrawMatch(Match *match, CArrayObj *bars, int i)
 {
     // Get times and prices
-    bool isGroupMatch = i > 0; // TODO not working match.IsGroupMatch();
+    bool isGroupMatch = match.IsGroupMatch();
     Bar *startBar = (Bar *)bars.At(match.GetStart());
-    int timeStartBarIndex = iBarShift(Symbol(), 0, startBar.time, false) - 1;
+    int timeStartBarIndex = iBarShift(Symbol(), 0, startBar.time, false) - (isGroupMatch ? 1 : 0);
     timeStartBarIndex = timeStartBarIndex < 0 ? 0 : timeStartBarIndex;
-    int priceStartBarIndex = iBarShift(Symbol(), 0, startBar.time, false) - (isGroupMatch ? 0 : 1);
+    int priceStartBarIndex = iBarShift(Symbol(), 0, startBar.time, false);
     priceStartBarIndex = priceStartBarIndex < 0 ? 0 : priceStartBarIndex;
     Bar *endBar = (Bar *)bars.At(match.GetEnd());
-    int timeEndBarIndex = iBarShift(Symbol(), 0, endBar.time, false) + 1;
-    Print("timeEndBarIndex: ", timeEndBarIndex);
+    int timeEndBarIndex = iBarShift(Symbol(), 0, endBar.time, false) + (isGroupMatch ? 1 : 0);
     timeEndBarIndex = timeEndBarIndex < 0 ? 0 : timeEndBarIndex;
-    Print("timeEndBarIndex: ", timeEndBarIndex);
-    Print("endBar.time: ", endBar.time);
-    int priceEndBarIndex = iBarShift(Symbol(), 0, endBar.time, false) + (isGroupMatch ? 0 : 1);
+    int priceEndBarIndex = iBarShift(Symbol(), 0, endBar.time, false);
     priceEndBarIndex = priceEndBarIndex < 0 ? 0 : priceEndBarIndex;
 
     datetime time1 = iTime(Symbol(), Period(), timeEndBarIndex);
-    double price1 = iHigh(Symbol(), Period(), iHighest(Symbol(), Period(), MODE_HIGH, priceEndBarIndex - priceStartBarIndex, priceStartBarIndex));
+    double price1 = iHigh(Symbol(), Period(), iHighest(Symbol(), Period(), MODE_HIGH, priceEndBarIndex - priceStartBarIndex + 1, priceStartBarIndex));
     datetime time2 = iTime(Symbol(), Period(), timeStartBarIndex);
-    double price2 = iLow(Symbol(), Period(), iLowest(Symbol(), Period(), MODE_LOW, priceEndBarIndex - priceStartBarIndex, priceStartBarIndex));
-    Print("time1: ", TimeToString(time1), ", price1: ", price1, ", time2: ", TimeToString(time2), ", price2: ", price2);
+    double price2 = iLow(Symbol(), Period(), iLowest(Symbol(), Period(), MODE_LOW, priceEndBarIndex - priceStartBarIndex + 1, priceStartBarIndex));
 
     // Draw rectangle
     string rectangleName = MatchBoxName + IntegerToString(i);
     if (ObjectCreate(ChartID(), rectangleName, OBJ_RECTANGLE, 0, time1, price1, time2, price2))
-    {
         ObjectSetInteger(ChartID(), rectangleName, OBJPROP_COLOR, isGroupMatch ? clrRed : clrBlue);
-    }
 }
 
 class DummyPinbarMatcher : public PatternMatcher
