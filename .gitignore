@@ -9,8 +9,7 @@
 *.ex5
 
 # Include
-!Include/
-Include/*
+Include
 !Include/tradeql/
 
 # Scripts
@@ -20,7 +19,6 @@ Scripts/UnitTests
 
 # Other
 Experts
-Indicators
 Libraries
 Profiles
 Files
