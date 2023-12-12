@@ -230,7 +230,7 @@ private:
                 Match *tempMatch = (Match *)tempMatches.At(i);
                 if (tempMatch.IsGroupMatch())
                 {
-                    Match *newMatch = new Match(tempMatch.GetStart(), tempMatch.GetEnd());
+                    Match *newMatch = new Match(tempMatch.GetStart(), tempMatch.GetEnd(), tempMatch.IsGroupMatch());
                     matches.Add(newMatch);
                 }
             }
@@ -288,7 +288,7 @@ private:
                 Match *tempMatch = (Match *)tempMatches.At(i);
                 if (tempMatch.IsGroupMatch())
                 {
-                    Match *newMatch = new Match(tempMatch.GetStart(), tempMatch.GetEnd());
+                    Match *newMatch = new Match(tempMatch.GetStart(), tempMatch.GetEnd(), tempMatch.IsGroupMatch());
                     matches.Add(newMatch);
                 }
             }
