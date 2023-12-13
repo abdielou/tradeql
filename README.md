@@ -224,7 +224,7 @@ A simple indicator has been implemented to showcase how TradeQL can be used. Thi
 - Query: `B*>(If)+>B*>(Ir)+>B*>(Ir)+>B*`
 - Bars: `20`
 
-![TradeQL Indicator](Images/sample.png)
+![TradeQL Indicator](Images/demo.png)
 
 The blue square shows the full match, and the red squares show the captured groups. In the query we are capturing two groups, the first one is `(If)+` (one or more forward imbalances) and the second one is `(Ir)+` (one or more reverse imbalances). The captured groups are highlighted in red.
 
