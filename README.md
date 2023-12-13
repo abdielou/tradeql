@@ -215,3 +215,17 @@ void OnStart() {
 ```
 
 More examples can be found in the [`/Scripts`](Scripts/) folder.
+
+# DEMO
+
+A simple indicator has been implemented to showcase how TradeQL can be used. This indicator uses TradeQL to identify and highlight candlestick a pattern on the chart based on a user-defined query. To use, simply click on the chart, and the pattern will be applied to the next few bars. Captured groups are highlighted.
+
+- Trend: `Bullish`
+- Query: `B*>(If)+>B*>(Ir)+>B*>(Ir)+>B*`
+- Bars: `20`
+
+![TradeQL Indicator](Images/sample.png)
+
+The blue square shows the full match, and the red squares show the captured groups. In the query we are capturing two groups, the first one is `(If)+` (one or more forward imbalances) and the second one is `(Ir)+` (one or more reverse imbalances). The captured groups are highlighted in red.
+
+If there are no matches, the indicator will simply show a black box around the target bars.
