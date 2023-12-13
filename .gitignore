@@ -17,12 +17,15 @@ Include
 Scripts/Examples
 Scripts/UnitTests
 
+# Images
+Images/*.bmp
+
+
 # Other
 Experts
 Libraries
 Profiles
 Files
-Images
 Services
 Shared Projects
 Logs
