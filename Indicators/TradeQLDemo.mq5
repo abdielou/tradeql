@@ -15,9 +15,10 @@
 
 const string InputFieldName = "TradeQLQueryInput";
 const string MatchBoxName = "TradeQLMatch";
-const string DefaultQuery = "B*>(If)+>B*";
+const string DefaultQuery = "B*>(If)+>B*>(Ir)+>B*>(Ir)+>B*"; // ICT SB
 datetime gSelectedTime = 0;
-int gBarCount = 10;
+int gBarCount = 20;
+Trend gTrend = Trend::TREND_BEARISH;
 
 int OnInit()
 {
@@ -82,7 +83,7 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
         PopulateBars(selectedBarIndex, bars, gBarCount);
 
         // Match
-        TradeQL tradeQL(bars, TREND_BULLISH, NULL, new DummyPinbarMatcher());
+        TradeQL tradeQL(bars, gTrend, NULL, new DummyPinbarMatcher());
         CArrayObj *matches = new CArrayObj();
         tradeQL.Match(query, matches);
 
