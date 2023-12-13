@@ -17,6 +17,7 @@ const string InputFieldName = "TradeQLQueryInput";
 const string MatchBoxName = "TradeQLMatch";
 const string DefaultQuery = "B*>(If)+>B*";
 datetime gSelectedTime = 0;
+int gBarCount = 10;
 
 int OnInit()
 {
@@ -78,7 +79,7 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
 
         // Load bars
         CArrayObj *bars = new CArrayObj();
-        PopulateBars(selectedBarIndex, bars, 10);
+        PopulateBars(selectedBarIndex, bars, gBarCount);
 
         // Match
         TradeQL tradeQL(bars, TREND_BULLISH, NULL, new DummyPinbarMatcher());
@@ -86,6 +87,7 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
         tradeQL.Match(query, matches);
 
         // Draw matches
+        ObjectsDeleteAll(ChartID(), MatchBoxName);
         if (matches.Total() > 0)
         {
             for (int i = 0; i < matches.Total(); ++i)
@@ -99,9 +101,7 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
             }
         }
         else
-        {
-            ObjectsDeleteAll(ChartID(), MatchBoxName);
-        }
+            DrawNoMatch(selectedBarIndex, selectedBarIndex + gBarCount);
 
         // Cleanup
         for (int i = 0; i < matches.Total(); ++i)
@@ -142,7 +142,7 @@ void PrintMatch(Match *match, CArrayObj *bars, int i)
     int startBarIndex = iBarShift(Symbol(), 0, startBar.time, false);
     Bar *endBar = (Bar *)bars.At(match.GetEnd());
     int endBarIndex = iBarShift(Symbol(), 0, endBar.time, false);
-    Print(i == 0 ? "Match: " : "  Sub-Match: ", "[", startBarIndex, ",", TimeToString(endBar.time), "] to [", endBarIndex, ",", TimeToString(startBar.time), "]");
+    Print(!match.IsGroupMatch() ? "Match: " : "  Sub-Match: ", "[", startBarIndex, ",", TimeToString(startBar.time), "] to [", endBarIndex, ",", TimeToString(endBar.time), "]");
 }
 
 void DrawMatch(Match *match, CArrayObj *bars, int i)
@@ -150,25 +150,46 @@ void DrawMatch(Match *match, CArrayObj *bars, int i)
     // Get times and prices
     bool isGroupMatch = match.IsGroupMatch();
     Bar *startBar = (Bar *)bars.At(match.GetStart());
-    int timeStartBarIndex = iBarShift(Symbol(), 0, startBar.time, false) - (isGroupMatch ? 1 : 0);
+    int timeStartBarIndex = iBarShift(Symbol(), 0, startBar.time, false) + (isGroupMatch ? 1 : 0);
     timeStartBarIndex = timeStartBarIndex < 0 ? 0 : timeStartBarIndex;
     int priceStartBarIndex = iBarShift(Symbol(), 0, startBar.time, false);
     priceStartBarIndex = priceStartBarIndex < 0 ? 0 : priceStartBarIndex;
     Bar *endBar = (Bar *)bars.At(match.GetEnd());
-    int timeEndBarIndex = iBarShift(Symbol(), 0, endBar.time, false) + (isGroupMatch ? 1 : 0);
+    int timeEndBarIndex = iBarShift(Symbol(), 0, endBar.time, false) - (isGroupMatch ? 1 : 0);
     timeEndBarIndex = timeEndBarIndex < 0 ? 0 : timeEndBarIndex;
     int priceEndBarIndex = iBarShift(Symbol(), 0, endBar.time, false);
     priceEndBarIndex = priceEndBarIndex < 0 ? 0 : priceEndBarIndex;
 
     datetime time1 = iTime(Symbol(), Period(), timeEndBarIndex);
-    double price1 = iHigh(Symbol(), Period(), iHighest(Symbol(), Period(), MODE_HIGH, priceEndBarIndex - priceStartBarIndex + 1, priceStartBarIndex));
+    double price1 = iHigh(Symbol(), Period(), iHighest(Symbol(), Period(), MODE_HIGH, priceStartBarIndex - priceEndBarIndex + 1, priceEndBarIndex));
     datetime time2 = iTime(Symbol(), Period(), timeStartBarIndex);
-    double price2 = iLow(Symbol(), Period(), iLowest(Symbol(), Period(), MODE_LOW, priceEndBarIndex - priceStartBarIndex + 1, priceStartBarIndex));
+    double price2 = iLow(Symbol(), Period(), iLowest(Symbol(), Period(), MODE_LOW, priceStartBarIndex - priceEndBarIndex + 1, priceEndBarIndex));
 
     // Draw rectangle
     string rectangleName = MatchBoxName + IntegerToString(i);
-    if (ObjectCreate(ChartID(), rectangleName, OBJ_RECTANGLE, 0, time1, price1, time2, price2))
+    if (ObjectCreate(ChartID(), rectangleName, OBJ_RECTANGLE, 0, time2, price2, time1, price1))
         ObjectSetInteger(ChartID(), rectangleName, OBJPROP_COLOR, isGroupMatch ? clrRed : clrBlue);
+}
+
+void DrawNoMatch(int startIndex, int endIndex)
+{
+    if (gSelectedTime == 0)
+        return;
+
+    int endBarIndex = iBarShift(Symbol(), 0, gSelectedTime, false);
+    endBarIndex = endBarIndex < 0 ? 0 : endBarIndex;
+    int startBarIndex = endBarIndex - gBarCount + 1;
+    startBarIndex = startBarIndex < 0 ? 0 : startBarIndex;
+
+    datetime time1 = iTime(Symbol(), Period(), endBarIndex);
+    double price1 = iHigh(Symbol(), Period(), iHighest(Symbol(), Period(), MODE_HIGH, endBarIndex - startBarIndex + 1, startBarIndex));
+    datetime time2 = iTime(Symbol(), Period(), startBarIndex);
+    double price2 = iLow(Symbol(), Period(), iLowest(Symbol(), Period(), MODE_LOW, endBarIndex - startBarIndex + 1, startBarIndex));
+
+    // Draw rectangle
+    string rectangleName = MatchBoxName + "NoMatch";
+    if (ObjectCreate(ChartID(), rectangleName, OBJ_RECTANGLE, 0, time1, price1, time2, price2))
+        ObjectSetInteger(ChartID(), rectangleName, OBJPROP_COLOR, clrBlack);
 }
 
 class DummyPinbarMatcher : public PatternMatcher
