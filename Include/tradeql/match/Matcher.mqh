@@ -61,7 +61,7 @@ private:
     void MatchPatternNode(PatternNode *node, CArrayObj *matches, int startIndex)
     {
         Match *match = new Match(startIndex);
-        for (int i = startIndex; i < bars.Total(); ++i)
+        for (int i = startIndex; i >= 0; i--)
         {
             // Handle pattern
             bool isPatternMatch = false;
@@ -152,7 +152,7 @@ private:
         // Check if we have matches
         if (match.GetEnd() != -1)
         {
-            match.SetEnd(bars.Total() - 1); // We ran out of bars
+            match.SetEnd(0); // We ran out of bars
             matches.Add(match);
         }
         else
@@ -168,7 +168,7 @@ private:
         {
             ASTNode *alternative = node.GetExpressions().At(i);
             CArrayObj *tempMatches = new CArrayObj();
-            IsMatch(alternative, tempMatches, startIndex);
+            _IsMatch(alternative, tempMatches, startIndex);
 
             if (tempMatches.Total() > 0)
             {
@@ -193,14 +193,14 @@ private:
             while (currentIndex < bars.Total())
             {
                 CArrayObj *innerMatches = new CArrayObj();
-                IsMatch(innerExpr, innerMatches, currentIndex);
+                _IsMatch(innerExpr, innerMatches, currentIndex);
 
                 if (innerMatches.Total() > 0)
                 {
                     // Add all matches from innerMatches to tempMatches
                     AddMatchesToMainList(tempMatches, innerMatches);
                     Match *lastMatch = (Match *)innerMatches.At(innerMatches.Total() - 1);
-                    currentIndex = lastMatch.GetEnd() + 1;
+                    currentIndex = lastMatch.GetEnd() - 1;
                 }
                 else
                 {
@@ -213,7 +213,7 @@ private:
         }
         else
         {
-            IsMatch(innerExpr, tempMatches, startIndex);
+            _IsMatch(innerExpr, tempMatches, startIndex);
         }
 
         if (tempMatches.Total() > 0) // Join matches into a single match
@@ -257,13 +257,13 @@ private:
             ASTNode *expr = node.GetExpressions().At(i);
             CArrayObj *innerMatches = new CArrayObj();
 
-            IsMatch(expr, innerMatches, currentIndex);
+            _IsMatch(expr, innerMatches, currentIndex);
 
             if (innerMatches.Total() > 0) // Expression matched, continue to next expression
             {
                 AddMatchesToMainList(tempMatches, innerMatches);
                 Match *lastMatch = (Match *)innerMatches.At(innerMatches.Total() - 1);
-                currentIndex = lastMatch.GetEnd() + 1;
+                currentIndex = lastMatch.GetEnd() - 1;
             }
             else // No match, therefore sequence not matched
             {
@@ -296,6 +296,28 @@ private:
         delete tempMatches;
     }
 
+    void _IsMatch(ASTNode *node, CArrayObj *matches, int startIndex)
+    {
+        switch (node.GetNodeType())
+        {
+        case TYPE_SEQUENCE_EXPR_NODE:
+            MatchSequenceExprNode(node, matches, startIndex);
+            break;
+        case TYPE_GROUP_NODE:
+            MatchGroupNode(node, matches, startIndex);
+            break;
+        case TYPE_ALT_EXPR_NODE:
+            MatchAltExprNode(node, matches, startIndex);
+            break;
+        case TYPE_PATTERN_NODE:
+            MatchPatternNode(node, matches, startIndex);
+            break;
+        default:
+            Print("WARNING: Unknown node type");
+            break;
+        }
+    }
+
 public:
     Matcher(CArrayObj *pbars, Trend ptrend, PatternMatcher *imbalanceMatcher = NULL, PatternMatcher *pinbarMatcher = NULL) : bars(pbars), trend(ptrend), imbMatcher(imbalanceMatcher), pinMatcher(pinbarMatcher)
     {
@@ -316,25 +338,8 @@ public:
             delete pinMatcher;
     }
 
-    void IsMatch(ASTNode *node, CArrayObj *matches, int startIndex = 0)
+    void IsMatch(ASTNode *node, CArrayObj *matches)
     {
-        switch (node.GetNodeType())
-        {
-        case TYPE_SEQUENCE_EXPR_NODE:
-            MatchSequenceExprNode(node, matches, startIndex);
-            break;
-        case TYPE_GROUP_NODE:
-            MatchGroupNode(node, matches, startIndex);
-            break;
-        case TYPE_ALT_EXPR_NODE:
-            MatchAltExprNode(node, matches, startIndex);
-            break;
-        case TYPE_PATTERN_NODE:
-            MatchPatternNode(node, matches, startIndex);
-            break;
-        default:
-            Print("WARNING: Unknown node type");
-            break;
-        }
+        _IsMatch(node, matches, bars.Total() - 1);
     }
 };
