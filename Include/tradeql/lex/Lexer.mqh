@@ -68,6 +68,12 @@ private:
             case ')':
                 AddToken(TOKEN_GROUP_CLOSE, ShortToString(c));
                 break;
+            case '?':
+                AddToken(TOKEN_NO_CAP_Q, ShortToString(c));
+                break;
+            case ':':
+                AddToken(TOKEN_NO_CAP_C, ShortToString(c));
+                break;
             case '>':
                 AddToken(TOKEN_SEQUENCE, ShortToString(c));
                 break;
