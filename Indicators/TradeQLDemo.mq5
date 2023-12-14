@@ -15,7 +15,7 @@
 
 const string InputFieldName = "TradeQLQueryInput";
 const string MatchBoxName = "TradeQLMatch";
-const string DefaultQuery = "B*>(If)+>B*>(Ir)+>B*>(Ir)+>B*"; // ICT SB
+const string DefaultQuery = "(?:I|B)*>(If)+>B*>(Ir)+>B*>(Ir)+>B*"; // ICT SB
 datetime gSelectedTime = 0;
 int gBarCount = 20;
 Trend gTrend = Trend::TREND_BEARISH;
