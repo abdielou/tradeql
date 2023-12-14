@@ -5,6 +5,7 @@
 #include "./ast/PatternNode.mqh"
 #include "./ast/AltExprNode.mqh"
 #include "./ast/GroupNode.mqh"
+#include "./ast/NonCapturingGroupNode.mqh"
 #include "./ast/SequenceExprNode.mqh"
 
 class Parser
@@ -20,10 +21,22 @@ private:
             return (Token *)tokenList.At(pos);
         return NULL;
     }
+    Token *PeekToken(int offset)
+    {
+        if (pos + offset < tokenList.Total())
+            return (Token *)tokenList.At(pos + offset);
+        return NULL;
+    }
     Token *AdvanceToken()
     {
         if (pos < tokenList.Total())
             return (Token *)tokenList.At(pos++);
+        return NULL;
+    }
+    Token *RewindToken()
+    {
+        if (pos > 0)
+            return (Token *)tokenList.At(pos--);
         return NULL;
     }
     bool IsTokenPattern(TokenType type)
@@ -138,6 +151,53 @@ private:
 
                 return new GroupNode(innerExpr, quantifier);
             }
+            else
+            {
+                RewindToken();
+            }
+        }
+
+        return NULL;
+    }
+
+    ASTNode *ParseNonCapturingGroup()
+    {
+        Token *currentToken = GetCurrentToken();
+
+        if (currentToken != NULL && currentToken.GetType() == TOKEN_GROUP_OPEN)
+        {
+            AdvanceToken(); // Consume the '(' token
+
+            // Non-Capturing Group
+            currentToken = GetCurrentToken();
+            Token *peekedToken = PeekToken(1);
+            if (
+                currentToken != NULL && peekedToken != NULL &&
+                currentToken.GetType() == TOKEN_NO_CAP_Q &&
+                peekedToken.GetType() == TOKEN_NO_CAP_C)
+            {
+                AdvanceToken(); // Consume the '?' token
+                AdvanceToken(); // Consume the ':' token
+
+                ASTNode *innerExpr = ParseAltExpr();
+
+                currentToken = GetCurrentToken();
+                if (currentToken != NULL && currentToken.GetType() == TOKEN_GROUP_CLOSE)
+                {
+                    AdvanceToken(); // Consume the ')' token
+
+                    // Optional Quantifier
+                    Quantifier quantifier = QUANTIFIER_UNKNOWN;
+                    currentToken = GetCurrentToken();
+                    if (currentToken != NULL && IsTokenQuantifier(currentToken.GetType()))
+                    {
+                        quantifier = StringToQuantifier(currentToken.GetValue());
+                        AdvanceToken();
+                    }
+
+                    return new NonCapturingGroupNode(innerExpr, quantifier);
+                }
+            }
         }
 
         return NULL;
@@ -152,7 +212,13 @@ private:
             // Check for '(' to parse as Group
             if (currentToken.GetType() == TOKEN_GROUP_OPEN)
             {
-                return ParseGroup();
+                ASTNode *exprNode = ParseGroup();
+                if (exprNode != NULL)
+                    return exprNode;
+                else
+                {
+                    return ParseNonCapturingGroup();
+                }
             }
             else
             {
