@@ -227,10 +227,10 @@ More examples can be found in the [`/Scripts`](Scripts/) folder.
 
 # DEMO
 
-A simple indicator has been implemented to showcase how TradeQL can be used. This indicator uses TradeQL to identify and highlight candlestick a pattern on the chart based on a user-defined query. To use, simply click on the chart, and the pattern will be applied to the next few bars. Captured groups are highlighted.
+A simple indicator has been implemented to showcase how TradeQL can be used. This indicator uses TradeQL to identify and highlight a pattern on the chart based on a user-defined query. To use, simply click on the chart, and the pattern will be applied to the next few bars. Captured groups are highlighted.
 
-- Trend: `Bullish`
-- Query: `B*>(If)+>B*>(Ir)+>B*>(Ir)+>B*`
+- Trend: `Bearish`
+- Query: `(?:I|B)*>(If)+>B*>(Ir)+>B*>(Ir)+>B*`
 - Bars: `20`
 
 ![TradeQL Indicator](Images/demo.png)
