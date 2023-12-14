@@ -80,12 +80,15 @@ void _OnStart()
     TestPatterns("(I|B)+", TREND_BULLISH, PopulateBarsWithoutImbalance, "Group zero or more match", true);
     TestPatterns("(I|Br)+", TREND_BULLISH, PopulateBarsWithoutImbalance, "Group zero or more no match", false);
 
+    // Non Capturing Group
+    TestPatterns("(?:B)*>(I)+>(?:B)*", TREND_BULLISH, PopulateBarsWithImbalance, "Non Capturing Group match", true);
+
     // Sequence
     TestPatterns("B>I>B", TREND_BULLISH, PopulateBarsWithImbalance, "Sequence match", true);
     TestPatterns("B>I>B", TREND_BULLISH, PopulateBarsWithoutImbalance, "Sequence no match", false);
 
     // Real Data
-    TestPatterns("B+>(Ir)>B+>(Ir)>B+", TREND_BULLISH, PopulateBarsWithRealData, "Real data match", true);
+    TestPatterns("(?:B)*>(I)+>(?:B)*", TREND_BULLISH, PopulateBarsWithImbalance, "Real data match", true);
 }
 
 void PopulateBarsWithoutImbalance(CArrayObj &bars)
