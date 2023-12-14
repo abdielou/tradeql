@@ -135,6 +135,55 @@ void TestParseGroup()
     delete mockTokens;
 }
 
+void TestParseNonCapturingGroup()
+{
+    // Create a mock token list for a group expression
+    CArrayObj *mockTokens = new CArrayObj();
+    mockTokens.Add(new Token(TOKEN_GROUP_OPEN, "("));  // Group start
+    mockTokens.Add(new Token(TOKEN_NO_CAP_Q, "?"));    // Non-capturing question mark
+    mockTokens.Add(new Token(TOKEN_NO_CAP_C, ":"));    // Non-capturing colon
+    mockTokens.Add(new Token(TOKEN_IMBALANCE, "I"));   // Pattern
+    mockTokens.Add(new Token(TOKEN_ALTERNATION, "|")); // Alternation
+    mockTokens.Add(new Token(TOKEN_BAR, "B"));         // Pattern
+    mockTokens.Add(new Token(TOKEN_GROUP_CLOSE, ")")); // Group end
+    mockTokens.Add(new Token(TOKEN_ONE_OR_MORE, "+")); // Quantifier
+
+    // Instantiate the parser with the mock token list
+    Parser parser(mockTokens);
+
+    // Call ParseGroup and get the result
+    ASTNode *result = parser.Parse();
+
+    // Assert the results
+    if (result != NULL && result.GetNodeType() == TYPE_NON_CAPTURING_GROUP_NODE)
+    {
+        NonCapturingGroupNode *nonCapGroupNode = (NonCapturingGroupNode *)result;
+        if (
+            nonCapGroupNode.GetQuantifier() == QUANTIFIER_ONE_OR_MORE &&
+            (nonCapGroupNode.GetInnerExpression().GetNodeType() == TYPE_PATTERN_NODE ||
+             nonCapGroupNode.GetInnerExpression().GetNodeType() == TYPE_ALT_EXPR_NODE))
+        {
+            Print("[PASS] Test Passed: Correct structure and quantifier for NonCapturingGroup");
+        }
+        else
+        {
+            Print("[FAIL] Test Failed: Incorrect structure or quantifier for NonCapturingGroup");
+        }
+    }
+    else
+    {
+        Print("[FAIL] Test Failed: Incorrect node type for NonCapturingGroup");
+    }
+
+    // Cleanup
+    delete result;
+    for (int i = 0; i < mockTokens.Total(); i++)
+    {
+        delete mockTokens.At(i);
+    }
+    delete mockTokens;
+}
+
 void TestParseExpression()
 {
     // Create a mock token list for an AltExpr (Expression)
@@ -262,5 +311,6 @@ void OnStart()
     TestParseBasicExpr();
     TestParseAltExpr();
     TestParseGroup();
+    TestParseNonCapturingGroup();
     TestParseSequenceExpr();
 }
