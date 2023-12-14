@@ -22,4 +22,9 @@ public:
     {
         return nodeType;
     }
+
+    void SetNodeType(ASTNodeType type)
+    {
+        nodeType = type;
+    }
 };

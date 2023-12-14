@@ -1,27 +1,11 @@
-#include "ASTNode.mqh"
-#include "../../pattern/Quantifier.mqh"
+#include "GroupNode.mqh"
 
-class NonCapturingGroupNode : public ASTNode
+class NonCapturingGroupNode : public GroupNode
 {
-private:
-    ASTNode *innerExpression;
-    Quantifier quantifier;
-
 public:
-    NonCapturingGroupNode(ASTNode *innerExpr, Quantifier quant = QUANTIFIER_UNKNOWN) : ASTNode(TYPE_NON_CAPTURING_GROUP_NODE), innerExpression(innerExpr), quantifier(quant) {}
-
-    ~NonCapturingGroupNode()
+    NonCapturingGroupNode(ASTNode *innerExpr, Quantifier quant = QUANTIFIER_UNKNOWN)
+        : GroupNode(innerExpr, quant)
     {
-        delete innerExpression;
-    }
-
-    ASTNode *GetInnerExpression() const
-    {
-        return innerExpression;
-    }
-
-    Quantifier GetQuantifier() const
-    {
-        return quantifier;
+        SetNodeType(TYPE_NON_CAPTURING_GROUP_NODE);
     }
 };
