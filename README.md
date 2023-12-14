@@ -25,13 +25,22 @@ TradeQL is designed to describe the pattern's direction relative to an already e
 
 Quantifiers follow the direction and specify the quantity:
 
-- **0 or more `*`:** An unspecified number of occurrences, including none.
-- **1 or more `+`:** At least one occurrence.
+- **Zero or more `*`:** An unspecified number of occurrences, including none.
+- **One or more `+`:** At least one occurrence.
 - **Specific amount `{n}`:** Exactly 'n' occurrences, where 'n' is a number.
+
+> **Specific amount** not implemented on v1.
+
+### Groups
+
+Groups are used to capture sub-patterns within a pattern. They are denoted by parentheses `()` and are returned as part of the match results.
+
+- **Capture `(...)`:** Captures the sub-pattern within the parentheses.
+- **Non-Capture `(?:...)`:** Does not capture the sub-pattern within the parentheses.
 
 ### Meta-Patterns
 
-> Optional. Not implemented on v1.
+> **Meta-Patterns** not implemented on v1.
 
 - **Forward Consolidation `C+f`:** Equivalent to a series of bars in any direction or forward imbalances during a forward direction, denoted as `(Bf|Br|If)+`.
 - **Reverse Consolidation `C+r`:** Equivalent to a series of bars in any direction or reverse imbalances during a reverse direction, denoted as `(Bf|Br|Ir)+`.
