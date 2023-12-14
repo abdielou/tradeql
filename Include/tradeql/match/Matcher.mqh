@@ -181,7 +181,7 @@ private:
         Match *match = (Match *)matches.At(matches.Total() - 1);
     }
 
-    void MatchGroupNode(GroupNode *node, CArrayObj *matches, int startIndex)
+    void MatchGroupNode(GroupNode *node, CArrayObj *matches, int startIndex, bool capturing = true)
     {
         ASTNode *innerExpr = node.GetInnerExpression();
         Quantifier quantifier = node.GetQuantifier();
@@ -221,7 +221,7 @@ private:
             Match *firstMatch = (Match *)tempMatches.At(0);
             Match *lastMatch = (Match *)tempMatches.At(tempMatches.Total() - 1);
             Match *groupMatch = new Match(firstMatch.GetStart(), lastMatch.GetEnd());
-            groupMatch.SetGroupMatch(true);
+            groupMatch.SetGroupMatch(capturing);
             matches.Add(groupMatch);
 
             // Keep any group match in tempMatches
@@ -305,6 +305,9 @@ private:
             break;
         case TYPE_GROUP_NODE:
             MatchGroupNode(node, matches, startIndex);
+            break;
+        case TYPE_NON_CAPTURING_GROUP_NODE:
+            MatchGroupNode(node, matches, startIndex, false);
             break;
         case TYPE_ALT_EXPR_NODE:
             MatchAltExprNode(node, matches, startIndex);

@@ -9,8 +9,11 @@ Quantifier     ::= '*' | '+'
 # Composite Structures
 BasicExpr      ::= Pattern Direction? Quantifier?
 AltExpr        ::= BasicExpr ('|' BasicExpr)*
+
+# Groups
 Group          ::= '(' AltExpr ')' Quantifier?
+NonCapGroup    ::= '(?:' AltExpr ')' Quantifier?
 
 # Top-Level Structure
-Expression     ::= Group | AltExpr
+Expression     ::= Group | NonCapGroup | AltExpr
 SequenceExpr   ::= Expression ('>' Expression)*

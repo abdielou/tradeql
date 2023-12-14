@@ -10,7 +10,7 @@
 
 # Include
 Include
-!Include/tradeql/
+!Include/tradeql/*
 
 # Scripts
 !Scripts/

@@ -15,6 +15,8 @@ enum TokenType
     TOKEN_NEUTRAL_CONS, // C+
     TOKEN_ALTERNATION,  // |
     TOKEN_GROUP_OPEN,   // (
+    TOKEN_NO_CAP_Q,     // ?
+    TOKEN_NO_CAP_C,     // :
     TOKEN_GROUP_CLOSE,  // )
     TOKEN_SEQUENCE,     // >
     TOKEN_NUMBER,       // 0-9
