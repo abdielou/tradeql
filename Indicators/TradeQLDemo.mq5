@@ -15,7 +15,7 @@
 
 const string InputFieldName = "TradeQLQueryInput";
 const string MatchBoxName = "TradeQLMatch";
-const string DefaultQuery = "(?:I|B)*>(If)+>B*>(Ir)+>B*>(Ir)+>B*"; // ICT SB
+const string DefaultQuery = "(?:Ir|B)*>(If)+>B*>(Ir)+>B*>(Ir)+>B*"; // ICT SB
 datetime gSelectedTime = 0;
 int gBarCount = 20;
 Trend gTrend = Trend::TREND_BEARISH;
@@ -83,13 +83,22 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
         PopulateBars(selectedBarIndex, bars, gBarCount);
 
         // Match
-        TradeQL tradeQL(bars, gTrend, NULL, new DummyPinbarMatcher());
         CArrayObj *matches = new CArrayObj();
+        TradeQL tradeQL(bars, gTrend, NULL, new DummyPinbarMatcher());
         tradeQL.Match(query, matches);
+        bool hasMatches = matches.Total() > 0;
+        if (!hasMatches)
+        {
+            // Try again with opposite trend
+            gTrend = gTrend == Trend::TREND_BEARISH ? Trend::TREND_BULLISH : Trend::TREND_BEARISH;
+            TradeQL tradeQL(bars, gTrend, NULL, new DummyPinbarMatcher());
+            tradeQL.Match(query, matches);
+            hasMatches = matches.Total() > 0;
+        }
 
         // Draw matches
         ObjectsDeleteAll(ChartID(), MatchBoxName);
-        if (matches.Total() > 0)
+        if (hasMatches)
         {
             for (int i = 0; i < matches.Total(); ++i)
             {
@@ -148,6 +157,7 @@ void PrintMatch(Match *match, CArrayObj *bars, int i)
 
 void DrawMatch(Match *match, CArrayObj *bars, int i)
 {
+    bool isBullish = gTrend == Trend::TREND_BEARISH;
     // Get times and prices
     bool isGroupMatch = match.IsGroupMatch();
     Bar *startBar = (Bar *)bars.At(match.GetStart());
@@ -166,10 +176,28 @@ void DrawMatch(Match *match, CArrayObj *bars, int i)
     datetime time2 = iTime(Symbol(), Period(), timeStartBarIndex);
     double price2 = iLow(Symbol(), Period(), iLowest(Symbol(), Period(), MODE_LOW, priceStartBarIndex - priceEndBarIndex + 1, priceEndBarIndex));
 
+    color clrDirColor = isBullish ? clrGreen : clrRed;
+
     // Draw rectangle
     string rectangleName = MatchBoxName + IntegerToString(i);
     if (ObjectCreate(ChartID(), rectangleName, OBJ_RECTANGLE, 0, time2, price2, time1, price1))
-        ObjectSetInteger(ChartID(), rectangleName, OBJPROP_COLOR, isGroupMatch ? clrRed : clrBlue);
+    {
+        ObjectSetInteger(ChartID(), rectangleName, OBJPROP_COLOR, isGroupMatch ? clrBlue : clrDirColor);
+        if (!isGroupMatch)
+            ObjectSetInteger(ChartID(), rectangleName, OBJPROP_WIDTH, 2);
+    }
+
+    // If not a group match, draw an arrow at the end of the box, in the direction of the trend
+    if (!isGroupMatch)
+    {
+        string arrowName = MatchBoxName + IntegerToString(i) + "Arrow";
+        if (ObjectCreate(ChartID(), arrowName, isBullish ? OBJ_ARROW_UP : OBJ_ARROW_DOWN, 0, time1, isBullish ? price2 : price1))
+        {
+            ObjectSetInteger(ChartID(), arrowName, OBJPROP_COLOR, clrDirColor);
+            ObjectSetInteger(ChartID(), arrowName, OBJPROP_ANCHOR, isBullish ? ANCHOR_TOP : ANCHOR_BOTTOM);
+            ObjectSetInteger(ChartID(), arrowName, OBJPROP_WIDTH, 3);
+        }
+    }
 }
 
 void DrawNoMatch(int startIndex, int endIndex)
