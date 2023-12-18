@@ -13,12 +13,12 @@
 
 #include "../Include/tradeql/TradeQL.mqh"
 
+input string DefaultQuery = "(?:Ir|B)*>(If)+>B*>(Ir)+>B*>(Ir)+>B*"; // ICT SB
+input int MaxBarCount = 20;
+
 const string InputFieldName = "TradeQLQueryInput";
 const string MatchBoxName = "TradeQLMatch";
-const string DefaultQuery = "(?:Ir|B)*>If+>B*>(Ir)+>B*"; // Reaction imbalance
 datetime gSelectedTime = 0;
-int gBarCount = 20;
-Trend gTrend = Trend::TREND_BEARISH;
 
 int OnInit()
 {
@@ -80,18 +80,19 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
 
         // Load bars
         CArrayObj *bars = new CArrayObj();
-        PopulateBars(selectedBarIndex, bars, gBarCount);
+        PopulateBars(selectedBarIndex, bars, MaxBarCount);
 
         // Match
+        Trend trend = Trend::TREND_BULLISH;
         CArrayObj *matches = new CArrayObj();
-        TradeQL tradeQL(bars, gTrend, NULL, new DummyPinbarMatcher());
+        TradeQL tradeQL(bars, trend, NULL, new DummyPinbarMatcher());
         tradeQL.Match(query, matches);
         bool hasMatches = matches.Total() > 0;
         if (!hasMatches)
         {
             // Try again with opposite trend
-            gTrend = gTrend == Trend::TREND_BEARISH ? Trend::TREND_BULLISH : Trend::TREND_BEARISH;
-            TradeQL tradeQL(bars, gTrend, NULL, new DummyPinbarMatcher());
+            trend = Trend::TREND_BEARISH;
+            TradeQL tradeQL(bars, trend, NULL, new DummyPinbarMatcher());
             tradeQL.Match(query, matches);
             hasMatches = matches.Total() > 0;
         }
@@ -106,12 +107,12 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
                 if (match != NULL && !match.IsZeroMatch())
                 {
                     PrintMatch(match, bars, i);
-                    DrawMatch(match, bars, i);
+                    DrawMatch(match, bars, i, trend);
                 }
             }
         }
         else
-            DrawNoMatch(selectedBarIndex, selectedBarIndex + gBarCount);
+            DrawNoMatch(selectedBarIndex, selectedBarIndex + MaxBarCount);
 
         // Cleanup
         for (int i = 0; i < matches.Total(); ++i)
@@ -155,9 +156,9 @@ void PrintMatch(Match *match, CArrayObj *bars, int i)
     Print(!match.IsGroupMatch() ? "Match: " : "  Sub-Match: ", "[", startBarIndex, ",", TimeToString(startBar.time), "] to [", endBarIndex, ",", TimeToString(endBar.time), "]");
 }
 
-void DrawMatch(Match *match, CArrayObj *bars, int i)
+void DrawMatch(Match *match, CArrayObj *bars, int i, Trend trend)
 {
-    bool isBullish = gTrend == Trend::TREND_BEARISH;
+    bool isBullish = trend == Trend::TREND_BEARISH;
     // Get times and prices
     bool isGroupMatch = match.IsGroupMatch();
     Bar *startBar = (Bar *)bars.At(match.GetStart());
@@ -207,7 +208,7 @@ void DrawNoMatch(int startIndex, int endIndex)
 
     int endBarIndex = iBarShift(Symbol(), 0, gSelectedTime, false);
     endBarIndex = endBarIndex < 0 ? 0 : endBarIndex;
-    int startBarIndex = endBarIndex - gBarCount + 1;
+    int startBarIndex = endBarIndex - MaxBarCount + 1;
     startBarIndex = startBarIndex < 0 ? 0 : startBarIndex;
 
     datetime time1 = iTime(Symbol(), Period(), endBarIndex);
