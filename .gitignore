@@ -10,8 +10,8 @@
 *.dat
 
 # Include
-Include
 !Include/tradeql/*
+Include
 
 # Scripts
 !Scripts/
