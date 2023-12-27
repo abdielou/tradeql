@@ -100,7 +100,7 @@ private:
                     altExprNode.AddExpression(exprNode);
                     AdvanceToken();
                 }
-                else if (GetCurrentToken() == NULL && altExprNode.GetExpressions().Total() > 0)
+                else if (altExprNode.GetExpressions().Total() > 0)
                 {
                     altExprNode.AddExpression(exprNode);
                     return altExprNode;
