@@ -111,8 +111,7 @@ void TestParseGroup()
         GroupNode *groupNode = (GroupNode *)result;
         if (
             groupNode.GetQuantifier() == QUANTIFIER_ONE_OR_MORE &&
-            (groupNode.GetInnerExpression().GetNodeType() == TYPE_PATTERN_NODE ||
-             groupNode.GetInnerExpression().GetNodeType() == TYPE_ALT_EXPR_NODE))
+            groupNode.GetInnerExpression().GetNodeType() == TYPE_ALT_EXPR_NODE)
         {
             Print("[PASS] Test Passed: Correct structure and quantifier for Group");
         }
