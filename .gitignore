@@ -10,8 +10,24 @@
 *.dat
 
 # Include
-!Include/tradeql/*
-Include
+!Include/*/**
+Include/*.mqh
+Include/Arrays
+Include/Canvas
+Include/ChartObjects
+Include/Charts
+Include/Controls
+Include/Expert
+Include/Files
+Include/Generic
+Include/Graphics
+Include/Indicators
+Include/Math
+Include/OpenCL
+Include/Strings
+Include/Tools
+Include/Trade
+Include/WinApi
 
 # Scripts
 !Scripts/
