@@ -60,6 +60,12 @@ void _OnStart()
     TestPatterns("Bf+", TREND_BULLISH, PopulateBarsWithImbalance, "SimplePattern one bar match", true);
     TestPatterns("I", TREND_BULLISH, PopulateBarsWithoutImbalance, "SimplePattern no match", false);
 
+    // Pinbar
+    TestPatterns("P", TREND_BULLISH, PopulateBarsWithBullishPinbar, "Pinbar match", true);
+    TestPatterns("P", TREND_BULLISH, PopulateBarsWithoutImbalance, "Pinbar no match", false);
+    TestPatterns("Pf", TREND_BULLISH, PopulateBarsWithBullishPinbar, "Pinbar forward match", true);
+    TestPatterns("Pr", TREND_BULLISH, PopulateBarsWithBearishPinbar, "Pinbar reverse match", true);
+
     // Alternation
     TestPatterns("I|B", TREND_BULLISH, PopulateBarsWithoutImbalance, "Alternation match", true);
 
@@ -127,6 +133,20 @@ void PopulateBarsWithImbalance(CArrayObj &bars)
     bar0.open = 1;
     bar0.low = 0;
     bars.Add(bar0);
+}
+
+void PopulateBarsWithBullishPinbar(CArrayObj &bars)
+{
+    // Add bars with Pinbar where isRejectedHigh is false
+    // TODO
+    Print("Not implemented");
+}
+
+void PopulateBarsWithBearishPinbar(CArrayObj &bars)
+{
+    // Add bars with Pinbar where isRejectedHigh is true
+    // TODO
+    Print("Not implemented");
 }
 
 void PopulateBarsWithRealData(CArrayObj &bars)
