@@ -10,7 +10,7 @@ void TestPatterns(string query, Trend trend, PopulateBarsFunc populate, string m
     populate(*testBars);
 
     // Match
-    PinbarMatcher *customPinMatcher = new PinbarMatcher(AverageBarSize(*testBars)); // optional pinbar matcher with custom average bar size
+    PinbarMatcher *customPinMatcher = new PinbarMatcher(AverageBarSize(*testBars)); // (optional) pinbar matcher with custom average bar size
     TradeQL tradeQL(testBars, trend, NULL, customPinMatcher);
     CArrayObj *matches = new CArrayObj();
     tradeQL.Match(query, matches);
@@ -62,10 +62,10 @@ void _OnStart()
     TestPatterns("I", TREND_BULLISH, PopulateBarsWithoutImbalance, "SimplePattern no match", false);
 
     // Pinbar
-    TestPatterns("P", TREND_BULLISH, PopulateBarsWithBullishPinbar, "Pinbar match", true);
-    TestPatterns("P", TREND_BULLISH, PopulateBarsWithoutImbalance, "Pinbar no match", false);
-    TestPatterns("Pf", TREND_BULLISH, PopulateBarsWithBullishPinbar, "Pinbar forward match", true);
-    TestPatterns("Pr", TREND_BULLISH, PopulateBarsWithBearishPinbar, "Pinbar reverse match", true);
+    TestPatterns("B*>P>B*", TREND_BULLISH, PopulateBarsWithBullishPinbar, "Pinbar match", true);
+    TestPatterns("B*>P>B*", TREND_BULLISH, PopulateBarsWithoutImbalance, "Pinbar no match", false);
+    TestPatterns("B*>Pf>B*", TREND_BULLISH, PopulateBarsWithBullishPinbar, "Pinbar forward match", true);
+    TestPatterns("B*>Pr>B*", TREND_BULLISH, PopulateBarsWithBearishPinbar, "Pinbar reverse match", true);
 
     // Alternation
     TestPatterns("I|B", TREND_BULLISH, PopulateBarsWithoutImbalance, "Alternation match", true);
@@ -136,18 +136,66 @@ void PopulateBarsWithImbalance(CArrayObj &bars)
     bars.Add(bar0);
 }
 
-void PopulateBarsWithBullishPinbar(CArrayObj &bars)
-{
-    // Add bars with Pinbar where isRejectedHigh is false
-    // TODO
-    Print("Not implemented");
-}
-
 void PopulateBarsWithBearishPinbar(CArrayObj &bars)
 {
-    // Add bars with Pinbar where isRejectedHigh is true
-    // TODO
-    Print("Not implemented");
+    Bar *bar3 = new Bar(); // bearish
+    bar3.high = 8;
+    bar3.close = 3;
+    bar3.open = 7;
+    bar3.low = 2;
+    bars.Add(bar3);
+
+    Bar *bar2 = new Bar(); // bullish
+    bar2.high = 9;
+    bar2.close = 7;
+    bar2.open = 4;
+    bar2.low = 3;
+    bars.Add(bar2);
+
+    Bar *bar1 = new Bar(); // bulllish - Is Pinbar High
+    bar1.high = 10;
+    bar1.close = 4;
+    bar1.open = 2;
+    bar1.low = 1.5;
+    bars.Add(bar1);
+
+    Bar *bar0 = new Bar(); // bullish
+    bar0.high = 3;
+    bar0.close = 2;
+    bar0.open = 1;
+    bar0.low = 0;
+    bars.Add(bar0);
+}
+
+void PopulateBarsWithBullishPinbar(CArrayObj &bars)
+{
+    Bar *bar3 = new Bar(); // bearish
+    bar3.high = 8;
+    bar3.close = 3;
+    bar3.open = 7;
+    bar3.low = 2;
+    bars.Add(bar3);
+
+    Bar *bar2 = new Bar(); // bullish
+    bar2.high = 9;
+    bar2.close = 7;
+    bar2.open = 4;
+    bar2.low = 3;
+    bars.Add(bar2);
+
+    Bar *bar1 = new Bar(); // bulllish - Is Pinbar Low
+    bar1.high = 10;
+    bar1.close = 9;
+    bar1.open = 8;
+    bar1.low = 1.5;
+    bars.Add(bar1);
+
+    Bar *bar0 = new Bar(); // bullish
+    bar0.high = 3;
+    bar0.close = 2;
+    bar0.open = 1;
+    bar0.low = 0;
+    bars.Add(bar0);
 }
 
 void PopulateBarsWithRealData(CArrayObj &bars)
