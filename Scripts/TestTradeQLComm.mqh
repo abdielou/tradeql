@@ -10,7 +10,8 @@ void TestPatterns(string query, Trend trend, PopulateBarsFunc populate, string m
     populate(*testBars);
 
     // Match
-    TradeQL tradeQL(testBars, trend, NULL, NULL);
+    PinbarMatcher *customPinMatcher = new PinbarMatcher(AverageBarSize(*testBars)); // optional pinbar matcher with custom average bar size
+    TradeQL tradeQL(testBars, trend, NULL, customPinMatcher);
     CArrayObj *matches = new CArrayObj();
     tradeQL.Match(query, matches);
 
@@ -162,4 +163,16 @@ void PopulateBarsWithRealData(CArrayObj &bars)
         bar.time = iTime(Symbol(), Period(), i);
         bars.Add(bar);
     }
+}
+
+double AverageBarSize(CArrayObj &bars)
+{
+    double sum = 0;
+    int count = bars.Total();
+    for (int i = 0; i < count; ++i)
+    {
+        Bar *bar = (Bar *)bars.At(i);
+        sum += bar.high - bar.low;
+    }
+    return sum / count;
 }
