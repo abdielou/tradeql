@@ -37,6 +37,9 @@ Scripts/UnitTests
 # Images
 Images/*.bmp
 
+# Indicators
+!/Indicators/
+Indicators/Examples
 
 # Other
 Experts
