@@ -1,16 +1,6 @@
 #include "../Include/tradeql/Util.mqh"
 #include "../Include/tradeql/TradeQL.mqh"
 
-class DummyPinbarMatcher : public PatternMatcher
-{
-public:
-    DummyPinbarMatcher() : PatternMatcher() {}
-    bool IsMatch(const int index)
-    {
-        return false;
-    }
-};
-
 typedef void (*PopulateBarsFunc)(CArrayObj &bars);
 
 void TestPatterns(string query, Trend trend, PopulateBarsFunc populate, string message, bool expect)
@@ -20,7 +10,8 @@ void TestPatterns(string query, Trend trend, PopulateBarsFunc populate, string m
     populate(*testBars);
 
     // Match
-    TradeQL tradeQL(testBars, trend, NULL, new DummyPinbarMatcher());
+    PinbarMatcher *customPinMatcher = new PinbarMatcher(AverageBarSize(*testBars)); // (optional) pinbar matcher with custom average bar size
+    TradeQL tradeQL(testBars, trend, NULL, customPinMatcher);
     CArrayObj *matches = new CArrayObj();
     tradeQL.Match(query, matches);
 
@@ -69,6 +60,12 @@ void _OnStart()
     TestPatterns("Br*", TREND_BULLISH, PopulateBarsWithoutImbalance, "SimplePattern zero match", true);
     TestPatterns("Bf+", TREND_BULLISH, PopulateBarsWithImbalance, "SimplePattern one bar match", true);
     TestPatterns("I", TREND_BULLISH, PopulateBarsWithoutImbalance, "SimplePattern no match", false);
+
+    // Pinbar
+    TestPatterns("B*>P>B*", TREND_BULLISH, PopulateBarsWithBullishPinbar, "Pinbar match", true);
+    TestPatterns("B*>P>B*", TREND_BULLISH, PopulateBarsWithoutImbalance, "Pinbar no match", false);
+    TestPatterns("B*>Pf>B*", TREND_BULLISH, PopulateBarsWithBullishPinbar, "Pinbar forward match", true);
+    TestPatterns("B*>Pr>B*", TREND_BULLISH, PopulateBarsWithBearishPinbar, "Pinbar reverse match", true);
 
     // Alternation
     TestPatterns("I|B", TREND_BULLISH, PopulateBarsWithoutImbalance, "Alternation match", true);
@@ -139,6 +136,68 @@ void PopulateBarsWithImbalance(CArrayObj &bars)
     bars.Add(bar0);
 }
 
+void PopulateBarsWithBearishPinbar(CArrayObj &bars)
+{
+    Bar *bar3 = new Bar(); // bearish
+    bar3.high = 8;
+    bar3.close = 3;
+    bar3.open = 7;
+    bar3.low = 2;
+    bars.Add(bar3);
+
+    Bar *bar2 = new Bar(); // bullish
+    bar2.high = 9;
+    bar2.close = 7;
+    bar2.open = 4;
+    bar2.low = 3;
+    bars.Add(bar2);
+
+    Bar *bar1 = new Bar(); // bulllish - Is Pinbar High
+    bar1.high = 10;
+    bar1.close = 4;
+    bar1.open = 2;
+    bar1.low = 1.5;
+    bars.Add(bar1);
+
+    Bar *bar0 = new Bar(); // bullish
+    bar0.high = 3;
+    bar0.close = 2;
+    bar0.open = 1;
+    bar0.low = 0;
+    bars.Add(bar0);
+}
+
+void PopulateBarsWithBullishPinbar(CArrayObj &bars)
+{
+    Bar *bar3 = new Bar(); // bearish
+    bar3.high = 8;
+    bar3.close = 3;
+    bar3.open = 7;
+    bar3.low = 2;
+    bars.Add(bar3);
+
+    Bar *bar2 = new Bar(); // bullish
+    bar2.high = 9;
+    bar2.close = 7;
+    bar2.open = 4;
+    bar2.low = 3;
+    bars.Add(bar2);
+
+    Bar *bar1 = new Bar(); // bulllish - Is Pinbar Low
+    bar1.high = 10;
+    bar1.close = 9;
+    bar1.open = 8;
+    bar1.low = 1.5;
+    bars.Add(bar1);
+
+    Bar *bar0 = new Bar(); // bullish
+    bar0.high = 3;
+    bar0.close = 2;
+    bar0.open = 1;
+    bar0.low = 0;
+    bars.Add(bar0);
+}
+
 void PopulateBarsWithRealData(CArrayObj &bars)
 {
     int count = 20;
@@ -152,4 +211,16 @@ void PopulateBarsWithRealData(CArrayObj &bars)
         bar.time = iTime(Symbol(), Period(), i);
         bars.Add(bar);
     }
+}
+
+double AverageBarSize(CArrayObj &bars)
+{
+    double sum = 0;
+    int count = bars.Total();
+    for (int i = 0; i < count; ++i)
+    {
+        Bar *bar = (Bar *)bars.At(i);
+        sum += bar.high - bar.low;
+    }
+    return sum / count;
 }
