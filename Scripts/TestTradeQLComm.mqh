@@ -1,16 +1,6 @@
 #include "../Include/tradeql/Util.mqh"
 #include "../Include/tradeql/TradeQL.mqh"
 
-class DummyPinbarMatcher : public PatternMatcher
-{
-public:
-    DummyPinbarMatcher() : PatternMatcher() {}
-    bool IsMatch(const int index)
-    {
-        return false;
-    }
-};
-
 typedef void (*PopulateBarsFunc)(CArrayObj &bars);
 
 void TestPatterns(string query, Trend trend, PopulateBarsFunc populate, string message, bool expect)
@@ -20,7 +10,7 @@ void TestPatterns(string query, Trend trend, PopulateBarsFunc populate, string m
     populate(*testBars);
 
     // Match
-    TradeQL tradeQL(testBars, trend, NULL, new DummyPinbarMatcher());
+    TradeQL tradeQL(testBars, trend, NULL, NULL);
     CArrayObj *matches = new CArrayObj();
     tradeQL.Match(query, matches);
 

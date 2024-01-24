@@ -10,6 +10,7 @@
 #include "../parse/ast/SequenceExprNode.mqh"
 #include "PatternMatcher.mqh"
 #include "ImbalanceMatcher.mqh"
+#include "PinbarMatcher.mqh"
 
 class Matcher
 {
@@ -329,7 +330,7 @@ public:
         imbMatcher.SetBars(*bars);
 
         if (pinMatcher == NULL)
-            return; // Not provided
+            pinMatcher = new PinbarMatcher();
         pinMatcher.SetBars(*bars);
     }
 
