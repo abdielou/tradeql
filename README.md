@@ -239,4 +239,4 @@ The blue square shows the full match, and the red squares show the captured grou
 
 If there are no matches, the indicator will simply show a black box around the target bars.
 
-> NOTE: Gray boxes are provided by another indicator and are not part of this demo indicator. These are used to highlight imbalances.
+> NOTE: I'm using this package with various trading tools, indicators and bots that I've built. If you are interested visit my website at [https://www.mozartanalytics.com](https://www.mozartanalytics.com).
