@@ -8,7 +8,6 @@
 #include "../parse/ast/AltExprNode.mqh"
 #include "../parse/ast/GroupNode.mqh"
 #include "../parse/ast/SequenceExprNode.mqh"
-#include "PatternMatcher.mqh"
 #include "ImbalanceMatcher.mqh"
 #include "PinbarMatcher.mqh"
 
@@ -18,8 +17,8 @@ private:
     CArrayObj *bars;
     Trend trend;
 
-    PatternMatcher *imbMatcher;
-    PatternMatcher *pinMatcher;
+    ImbalanceMatcher *imbMatcher;
+    PinbarMatcher *pinMatcher;
 
     bool Imbalance(int index)
     {
@@ -31,11 +30,11 @@ private:
         return false;
     }
 
-    bool Pinbar(int index)
+    bool Pinbar(int index, bool &isRejectedHigh)
     {
         if (pinMatcher != NULL)
         {
-            return pinMatcher.IsMatch(index);
+            return pinMatcher.IsMatch(index, isRejectedHigh);
         }
         Print("WARNING: Pinbar Matcher not implemented");
         return false;
@@ -64,25 +63,6 @@ private:
         Match *match = new Match(startIndex);
         for (int i = startIndex; i >= 0; i--)
         {
-            // Handle pattern
-            bool isPatternMatch = false;
-            if (node.GetPattern() == PATTERN_IMBALANCE)
-            {
-                isPatternMatch = Imbalance(i);
-            }
-            else if (node.GetPattern() == PATTERN_PINBAR)
-            {
-                isPatternMatch = Pinbar(i);
-            }
-            else if (node.GetPattern() == PATTERN_BAR)
-            {
-                isPatternMatch = !Imbalance(i) && !Pinbar(i);
-            }
-            else
-            {
-                isPatternMatch = false;
-            }
-
             // Handle direction
             bool isDirectionMatch = false;
             if (node.GetDirection() == DIRECTION_FORWARD)
@@ -96,6 +76,32 @@ private:
             else
             {
                 isDirectionMatch = true;
+            }
+
+            // Handle pattern
+            bool isPatternMatch = false;
+            bool isRejectedHigh = false;
+            if (node.GetPattern() == PATTERN_IMBALANCE)
+            {
+                isPatternMatch = Imbalance(i);
+            }
+            else if (node.GetPattern() == PATTERN_PINBAR)
+            {
+                isPatternMatch = Pinbar(i, isRejectedHigh);
+                if (node.GetDirection() != DIRECTION_UNKNOWN)
+                {
+                    // Override direction. Special case for pinbar
+                    bool isRejectedForward = trend == TREND_BULLISH ? !isRejectedHigh : isRejectedHigh;
+                    isDirectionMatch = (node.GetDirection() == DIRECTION_FORWARD && isRejectedForward) || (node.GetDirection() == DIRECTION_REVERSE && !isRejectedForward);
+                }
+            }
+            else if (node.GetPattern() == PATTERN_BAR)
+            {
+                isPatternMatch = !Imbalance(i) && !Pinbar(i, isRejectedHigh);
+            }
+            else
+            {
+                isPatternMatch = false;
             }
 
             // Handle quantifier
