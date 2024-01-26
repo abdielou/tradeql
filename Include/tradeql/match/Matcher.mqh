@@ -48,6 +48,20 @@ private:
         return bar.close > bar.open;
     }
 
+    double CenterOfMass(Match *match)
+    {
+        double centerOfMass = 0;
+        for (int i = match.GetStart(); i <= match.GetEnd(); ++i)
+        {
+            Bar *bar = (Bar *)bars.At(i);
+            bool isBullish = IsBullish(i);
+            double mass = isBullish ? bar.close - bar.open : bar.open - bar.close;
+            centerOfMass += mass / 2 + (isBullish ? bar.open : bar.close);
+        }
+        centerOfMass /= match.GetEnd() - match.GetStart() + 1;
+        return centerOfMass;
+    }
+
     void AddMatchesToMainList(CArrayObj *mainList, CArrayObj *tempList)
     {
         for (int i = 0; i < tempList.Total(); ++i)
@@ -58,7 +72,7 @@ private:
         }
     }
 
-    void MatchPatternNode(PatternNode *node, CArrayObj *matches, int startIndex)
+    void MatchPatternNode(PatternNode *node, CArrayObj *matches, int startIndex, CArrayObj *globalTemporaryMatches)
     {
         Match *match = new Match(startIndex);
         for (int i = startIndex; i >= 0; i--)
@@ -169,13 +183,13 @@ private:
         return;
     }
 
-    void MatchAltExprNode(AltExprNode *node, CArrayObj *matches, int startIndex)
+    void MatchAltExprNode(AltExprNode *node, CArrayObj *matches, int startIndex, CArrayObj *globalTemporaryMatches)
     {
         for (int i = 0; i < node.GetExpressions().Total(); ++i)
         {
             ASTNode *alternative = node.GetExpressions().At(i);
             CArrayObj *tempMatches = new CArrayObj();
-            _IsMatch(alternative, tempMatches, startIndex);
+            _IsMatch(alternative, tempMatches, startIndex, globalTemporaryMatches);
 
             if (tempMatches.Total() > 0)
             {
@@ -188,7 +202,7 @@ private:
         Match *match = (Match *)matches.At(matches.Total() - 1);
     }
 
-    void MatchGroupNode(GroupNode *node, CArrayObj *matches, int startIndex, bool capturing = true)
+    void MatchGroupNode(GroupNode *node, CArrayObj *matches, int startIndex, CArrayObj *globalTemporaryMatches, bool capturing = true)
     {
         ASTNode *innerExpr = node.GetInnerExpression();
         Quantifier quantifier = node.GetQuantifier();
@@ -200,7 +214,7 @@ private:
             while (currentIndex < bars.Total())
             {
                 CArrayObj *innerMatches = new CArrayObj();
-                _IsMatch(innerExpr, innerMatches, currentIndex);
+                _IsMatch(innerExpr, innerMatches, currentIndex, globalTemporaryMatches);
 
                 if (innerMatches.Total() > 0)
                 {
@@ -220,7 +234,7 @@ private:
         }
         else
         {
-            _IsMatch(innerExpr, tempMatches, startIndex);
+            _IsMatch(innerExpr, tempMatches, startIndex, globalTemporaryMatches);
         }
 
         if (tempMatches.Total() > 0) // Join matches into a single match
@@ -248,11 +262,47 @@ private:
             matches.Add(zeroMatch);
         }
 
+        // Validate Position against globalTemporaryMatches
+        Position position = node.GetPosition();
+        if (position == POSITION_BEYOND || position == POSITION_BEHIND)
+        {
+            // Get current group match
+            Match *currentGroupMatch = (Match *)matches.At(matches.Total() - 1);
+
+            // Find previous group match in globalTemporaryMatches
+            Match *previousGroupMatch = NULL;
+            for (int i = globalTemporaryMatches.Total() - 1; i >= 0; --i)
+            {
+                Match *tempMatch = (Match *)globalTemporaryMatches.At(i);
+                if (tempMatch.IsGroupMatch())
+                {
+                    previousGroupMatch = tempMatch;
+                    break;
+                }
+            }
+
+            // If previous
+            if (previousGroupMatch != NULL)
+            {
+                // Calculate average mass
+                double currentGroupMatchCenterOfMass = CenterOfMass(currentGroupMatch);
+                double previousGroupMatchCenterOfMass = CenterOfMass(previousGroupMatch);
+                bool isBeyond = trend == TREND_BULLISH ? currentGroupMatchCenterOfMass > previousGroupMatchCenterOfMass : currentGroupMatchCenterOfMass < previousGroupMatchCenterOfMass;
+
+                if ((position == POSITION_BEYOND && !isBeyond) || (position == POSITION_BEHIND && isBeyond))
+                {
+                    // Incorrect position. Remove and delete current group match
+                    matches.Delete(matches.Total() - 1);
+                    delete currentGroupMatch;
+                }
+            }
+        }
+
         // Cleanup
         delete tempMatches;
     }
 
-    void MatchSequenceExprNode(SequenceExprNode *node, CArrayObj *matches, int startIndex)
+    void MatchSequenceExprNode(SequenceExprNode *node, CArrayObj *matches, int startIndex, CArrayObj *globalTemporaryMatches)
     {
         int currentIndex = startIndex;
         bool sequenceFullyMatched = true;
@@ -264,7 +314,7 @@ private:
             ASTNode *expr = node.GetExpressions().At(i);
             CArrayObj *innerMatches = new CArrayObj();
 
-            _IsMatch(expr, innerMatches, currentIndex);
+            _IsMatch(expr, innerMatches, currentIndex, tempMatches);
 
             if (innerMatches.Total() > 0) // Expression matched, continue to next expression
             {
@@ -303,24 +353,24 @@ private:
         delete tempMatches;
     }
 
-    void _IsMatch(ASTNode *node, CArrayObj *matches, int startIndex)
+    void _IsMatch(ASTNode *node, CArrayObj *matches, int startIndex, CArrayObj *globalTemporaryMatches)
     {
         switch (node.GetNodeType())
         {
         case TYPE_SEQUENCE_EXPR_NODE:
-            MatchSequenceExprNode(node, matches, startIndex);
+            MatchSequenceExprNode(node, matches, startIndex, globalTemporaryMatches);
             break;
         case TYPE_GROUP_NODE:
-            MatchGroupNode(node, matches, startIndex);
+            MatchGroupNode(node, matches, startIndex, globalTemporaryMatches);
             break;
         case TYPE_NON_CAPTURING_GROUP_NODE:
-            MatchGroupNode(node, matches, startIndex, false);
+            MatchGroupNode(node, matches, startIndex, globalTemporaryMatches, false);
             break;
         case TYPE_ALT_EXPR_NODE:
-            MatchAltExprNode(node, matches, startIndex);
+            MatchAltExprNode(node, matches, startIndex, globalTemporaryMatches);
             break;
         case TYPE_PATTERN_NODE:
-            MatchPatternNode(node, matches, startIndex);
+            MatchPatternNode(node, matches, startIndex, globalTemporaryMatches);
             break;
         default:
             Print("WARNING: Unknown node type");
@@ -350,6 +400,6 @@ public:
 
     void IsMatch(ASTNode *node, CArrayObj *matches)
     {
-        _IsMatch(node, matches, bars.Total() - 1);
+        _IsMatch(node, matches, bars.Total() - 1, NULL);
     }
 };
