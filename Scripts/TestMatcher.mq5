@@ -3,16 +3,6 @@
 #include "../Include/tradeql/match/Matcher.mqh"
 #include "../Include/tradeql/Util.mqh"
 
-class DummyPinbarMatcher : public PatternMatcher
-{
-public:
-    DummyPinbarMatcher() : PatternMatcher() {}
-    bool IsMatch(const int index)
-    {
-        return false;
-    }
-};
-
 typedef void (*PopulateBarsFunc)(CArrayObj &bars);
 
 void TestPatterns(string query, Trend trend, PopulateBarsFunc populate, string message, bool expect)
@@ -26,7 +16,7 @@ void TestPatterns(string query, Trend trend, PopulateBarsFunc populate, string m
     ASTNode *node = parser.Parse();
 
     CArrayObj *matches = new CArrayObj();
-    Matcher matcher(testBars, trend, NULL, new DummyPinbarMatcher());
+    Matcher matcher(testBars, trend, NULL, NULL);
     matcher.IsMatch(node, matches);
 
     if (matches.Total() > 0)
@@ -85,6 +75,9 @@ void OnStart()
     // Non Capturing Group
     TestPatterns("(?:B)*>(I)+>(?:B)*", TREND_BULLISH, PopulateBarsWithImbalance, "Non Capturing Group match", true);
 
+    // Position
+    TestPatterns("B>(If)>B>(Ir)_>B", TREND_BULLISH, PopulateBarsWithPosition, "Group with Position match", true);
+
     // Sequence
     TestPatterns("B>I>B", TREND_BULLISH, PopulateBarsWithImbalance, "Sequence match", true);
     TestPatterns("B>I>B", TREND_BULLISH, PopulateBarsWithoutImbalance, "Sequence no match", false);
@@ -136,4 +129,8 @@ void PopulateBarsWithImbalance(CArrayObj &bars)
     bar0.open = 1;
     bar0.low = 0;
     bars.Add(bar0);
+}
+
+void PopulateBarsWithPosition(CArrayObj &bars)
+{
 }
