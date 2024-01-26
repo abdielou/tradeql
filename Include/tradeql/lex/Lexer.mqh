@@ -77,6 +77,12 @@ private:
             case '>':
                 AddToken(TOKEN_SEQUENCE, ShortToString(c));
                 break;
+            case '^':
+                AddToken(TOKEN_AHEAD, ShortToString(c));
+                break;
+            case '_':
+                AddToken(TOKEN_BEHIND, ShortToString(c));
+                break;
             // Unknown or not implemented yet
             // case '{':
             // case '}':
