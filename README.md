@@ -33,9 +33,9 @@ Quantifiers follow the direction and specify the quantity:
 
 ### Position
 
-Position specifies the relative position of the pattern in the sequence. Either ahead or behind the price of a previous pattern. In a bullish scenario, `Ahead` means that the price is higher in relation to the previous pattern, or lower in a bearish scenario. Conversely, `Behind` means that the price is lower in relation to the previous pattern, or higher in a bearish scenario.
+Position specifies the relative position of the pattern in the sequence. Either beyond or behind the price of a previous pattern. In a bullish scenario, `Beyond` means that the price is higher in relation to the previous pattern, or lower in a bearish scenario. Conversely, `behind` means that the price is lower in relation to the previous pattern, or higher in a bearish scenario.
 
-- **Ahead `^`:** The pattern occurs ahead the price of the previous pattern.
+- **Beyond `^`:** The pattern occurs beyond the price of the previous pattern.
 - **Behind `_`:** The pattern occurs behind the price of the previous pattern.
 
 This element can only be applied to groups and in reference to a previous group.

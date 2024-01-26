@@ -78,7 +78,7 @@ private:
                 AddToken(TOKEN_SEQUENCE, ShortToString(c));
                 break;
             case '^':
-                AddToken(TOKEN_AHEAD, ShortToString(c));
+                AddToken(TOKEN_BEYOND, ShortToString(c));
                 break;
             case '_':
                 AddToken(TOKEN_BEHIND, ShortToString(c));

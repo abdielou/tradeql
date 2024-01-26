@@ -20,7 +20,7 @@ enum TokenType
     TOKEN_GROUP_CLOSE,  // )
     TOKEN_SEQUENCE,     // >
     TOKEN_NUMBER,       // 0-9
-    TOKEN_AHEAD,        // ^
+    TOKEN_BEYOND,       // ^
     TOKEN_BEHIND,       // _
     TOKEN_END           // End of input
 };

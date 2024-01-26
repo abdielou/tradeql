@@ -62,7 +62,7 @@ void GetTestTokens(CArrayObj &tokens)
     tokens.Add(new Token(TOKEN_FORWARD));      // f
     tokens.Add(new Token(TOKEN_GROUP_CLOSE));  // )
     tokens.Add(new Token(TOKEN_ZERO_OR_MORE)); // *
-    tokens.Add(new Token(TOKEN_AHEAD));        // ^
+    tokens.Add(new Token(TOKEN_BEYOND));       // ^
     tokens.Add(new Token(TOKEN_SEQUENCE));     // >
     tokens.Add(new Token(TOKEN_BAR));          // B
     tokens.Add(new Token(TOKEN_ONE_OR_MORE));  // +
