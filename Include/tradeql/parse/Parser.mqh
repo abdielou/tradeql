@@ -51,6 +51,10 @@ private:
     {
         return type == TOKEN_ZERO_OR_MORE || type == TOKEN_ONE_OR_MORE;
     }
+    bool IsTokenPosition(TokenType type)
+    {
+        return type == TOKEN_BEYOND || type == TOKEN_BEHIND;
+    }
 
     // Expression Rules
     ASTNode *ParseBasicExpr()
@@ -149,7 +153,16 @@ private:
                     AdvanceToken();
                 }
 
-                return new GroupNode(innerExpr, quantifier);
+                // Optional Position
+                Position position = POSITION_UNKNOWN;
+                currentToken = GetCurrentToken();
+                if (currentToken != NULL && IsTokenPosition(currentToken.GetType()))
+                {
+                    position = StringToPosition(currentToken.GetValue());
+                    AdvanceToken();
+                }
+
+                return new GroupNode(innerExpr, quantifier, position);
             }
             else
             {
@@ -195,7 +208,16 @@ private:
                         AdvanceToken();
                     }
 
-                    return new NonCapturingGroupNode(innerExpr, quantifier);
+                    // Optional Position
+                    Position position = POSITION_UNKNOWN;
+                    currentToken = GetCurrentToken();
+                    if (currentToken != NULL && IsTokenPosition(currentToken.GetType()))
+                    {
+                        position = StringToPosition(currentToken.GetValue());
+                        AdvanceToken();
+                    }
+
+                    return new NonCapturingGroupNode(innerExpr, quantifier, position);
                 }
             }
         }
