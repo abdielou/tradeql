@@ -1,6 +1,6 @@
 //+------------------------------------------------------------------+
 //|                                                   TradeQL DEMO   |
-//|                                                 Copyright 2023   |
+//|                                                 Copyright 2024   |
 //|                                https://www.mozartanalytics.com   |
 //+------------------------------------------------------------------+
 #property description "TradeQL Demostrator"
