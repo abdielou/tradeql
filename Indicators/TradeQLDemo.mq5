@@ -13,8 +13,9 @@
 
 #include "../Include/tradeql/TradeQL.mqh"
 
-string DefaultQuery = "(?:B|P)*>(If+)>(?:B|P)*>(Ir+)>(?:B|P)+>(Ir+)_>(?:B|P)+"; // ICT SB
+input string DefaultQuery = "(?:B|P)*>(If+)>(?:B|P)*>(Ir+)>(?:B|P)*"; // Swing
 input int MaxBarCount = 20;
+input bool ShowQueryInput = false;
 
 const string InputFieldName = "TradeQLQueryInput";
 const string MatchBoxName = "TradeQLMatch";
@@ -22,20 +23,23 @@ datetime gSelectedTime = 0;
 
 int OnInit()
 {
-    // Create input text box
-    long chartCenterX = ChartGetInteger(ChartID(), CHART_WIDTH_IN_PIXELS) / 2;
-    int boxSize = 350;
-    if (ObjectCreate(ChartID(), InputFieldName, OBJ_EDIT, 0, 0, 0))
+    if (ShowQueryInput)
     {
-        ObjectSetInteger(ChartID(), InputFieldName, OBJPROP_XDISTANCE, (int)chartCenterX - (boxSize / 2));
-        ObjectSetInteger(ChartID(), InputFieldName, OBJPROP_YDISTANCE, 20);
-        ObjectSetInteger(ChartID(), InputFieldName, OBJPROP_XSIZE, boxSize);
-        ObjectSetInteger(ChartID(), InputFieldName, OBJPROP_YSIZE, 40);
-        ObjectSetString(ChartID(), InputFieldName, OBJPROP_TEXT, DefaultQuery);
-        ObjectSetInteger(ChartID(), InputFieldName, OBJPROP_COLOR, clrBlack);
-        ObjectSetInteger(ChartID(), InputFieldName, OBJPROP_BGCOLOR, clrWhiteSmoke);
-        ObjectSetInteger(ChartID(), InputFieldName, OBJPROP_BORDER_COLOR, clrNONE);
-        ObjectSetInteger(ChartID(), InputFieldName, OBJPROP_FONTSIZE, 15);
+        // Create input text box
+        long chartCenterX = ChartGetInteger(ChartID(), CHART_WIDTH_IN_PIXELS) / 2;
+        int boxSize = 350;
+        if (ObjectCreate(ChartID(), InputFieldName, OBJ_EDIT, 0, 0, 0))
+        {
+            ObjectSetInteger(ChartID(), InputFieldName, OBJPROP_XDISTANCE, (int)chartCenterX - (boxSize / 2));
+            ObjectSetInteger(ChartID(), InputFieldName, OBJPROP_YDISTANCE, 20);
+            ObjectSetInteger(ChartID(), InputFieldName, OBJPROP_XSIZE, boxSize);
+            ObjectSetInteger(ChartID(), InputFieldName, OBJPROP_YSIZE, 40);
+            ObjectSetString(ChartID(), InputFieldName, OBJPROP_TEXT, DefaultQuery);
+            ObjectSetInteger(ChartID(), InputFieldName, OBJPROP_COLOR, clrBlack);
+            ObjectSetInteger(ChartID(), InputFieldName, OBJPROP_BGCOLOR, clrWhiteSmoke);
+            ObjectSetInteger(ChartID(), InputFieldName, OBJPROP_BORDER_COLOR, clrNONE);
+            ObjectSetInteger(ChartID(), InputFieldName, OBJPROP_FONTSIZE, 15);
+        }
     }
 
     return INIT_SUCCEEDED;
@@ -77,6 +81,7 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
 
         // Get Query
         string query = ObjectGetString(ChartID(), InputFieldName, OBJPROP_TEXT);
+        query = query == "" ? DefaultQuery : query;
 
         // Load bars
         CArrayObj *bars = new CArrayObj();
