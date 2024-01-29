@@ -134,6 +134,53 @@ void TestParseGroup()
     delete mockTokens;
 }
 
+void TestParseGroupWithPosition()
+{
+    // Create a mock token list for a group expression
+    CArrayObj *mockTokens = new CArrayObj();
+    mockTokens.Add(new Token(TOKEN_GROUP_OPEN, "("));  // Group start
+    mockTokens.Add(new Token(TOKEN_IMBALANCE, "I"));   // Pattern
+    mockTokens.Add(new Token(TOKEN_ALTERNATION, "|")); // Alternation
+    mockTokens.Add(new Token(TOKEN_BAR, "B"));         // Pattern
+    mockTokens.Add(new Token(TOKEN_GROUP_CLOSE, ")")); // Group end
+    mockTokens.Add(new Token(TOKEN_ONE_OR_MORE, "+")); // Quantifier
+    mockTokens.Add(new Token(TOKEN_BEYOND, "^"));      // Position
+
+    // Instantiate the parser with the mock token list
+    Parser parser(mockTokens);
+
+    // Call ParseGroup and get the result
+    ASTNode *result = parser.Parse();
+
+    // Assert the results
+    if (result != NULL && result.GetNodeType() == TYPE_GROUP_NODE)
+    {
+        GroupNode *groupNode = (GroupNode *)result;
+        if (
+            groupNode.GetQuantifier() == QUANTIFIER_ONE_OR_MORE &&
+            groupNode.GetInnerExpression().GetNodeType() == TYPE_ALT_EXPR_NODE)
+        {
+            Print("[PASS] Test Passed: Correct structure and quantifier for Group with Position");
+        }
+        else
+        {
+            Print("[FAIL] Test Failed: Incorrect structure or quantifier for Group with Position");
+        }
+    }
+    else
+    {
+        Print("[FAIL] Test Failed: Incorrect node type for Group with Position");
+    }
+
+    // Cleanup
+    delete result;
+    for (int i = 0; i < mockTokens.Total(); i++)
+    {
+        delete mockTokens.At(i);
+    }
+    delete mockTokens;
+}
+
 void TestParseNonCapturingGroup()
 {
     // Create a mock token list for a group expression
@@ -311,5 +358,6 @@ void OnStart()
     TestParseAltExpr();
     TestParseGroup();
     TestParseNonCapturingGroup();
+    TestParseGroupWithPosition();
     TestParseSequenceExpr();
 }

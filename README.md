@@ -31,6 +31,15 @@ Quantifiers follow the direction and specify the quantity:
 
 > **Specific amount** not implemented on v1.
 
+### Position
+
+Position specifies the relative position of the pattern in the sequence. Either beyond or behind the price of a previous pattern. In a bullish scenario, `Beyond` means that the price is higher in relation to the previous pattern, or lower in a bearish scenario. Conversely, `behind` means that the price is lower in relation to the previous pattern, or higher in a bearish scenario.
+
+- **Beyond `^`:** The pattern occurs beyond the price of the previous pattern.
+- **Behind `_`:** The pattern occurs behind the price of the previous pattern.
+
+This element can only be applied to **Capture Groups** and in reference to a previous group.
+
 ### Groups
 
 Groups are used to capture sub-patterns within a pattern. They are denoted by parentheses `()` and are returned as part of the match results.
@@ -65,6 +74,10 @@ Groups are used to capture sub-patterns within a pattern. They are denoted by pa
 
 - **`Bf+`:** A series of forward bars
 - **`Pr{2}`:** At least two reverse pinbars
+
+### Group Patterns
+
+- **`B*>(If+)>B*>(Ir+)_>B*`:** One or more forward imbalances, followed by any number of bars, followed by one or more reverse imbalances where the price is behind the previous forward imbalances. This pattern tries to capture a swing. In a bullish scenario, a bullish imbalance is followed by a lower in price bearish imbalance.
 
 ### Complex Pattern
 

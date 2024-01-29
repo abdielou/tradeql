@@ -3,16 +3,6 @@
 #include "../Include/tradeql/match/Matcher.mqh"
 #include "../Include/tradeql/Util.mqh"
 
-class DummyPinbarMatcher : public PatternMatcher
-{
-public:
-    DummyPinbarMatcher() : PatternMatcher() {}
-    bool IsMatch(const int index)
-    {
-        return false;
-    }
-};
-
 typedef void (*PopulateBarsFunc)(CArrayObj &bars);
 
 void TestPatterns(string query, Trend trend, PopulateBarsFunc populate, string message, bool expect)
@@ -26,7 +16,7 @@ void TestPatterns(string query, Trend trend, PopulateBarsFunc populate, string m
     ASTNode *node = parser.Parse();
 
     CArrayObj *matches = new CArrayObj();
-    Matcher matcher(testBars, trend, NULL, new DummyPinbarMatcher());
+    Matcher matcher(testBars, trend, NULL, NULL);
     matcher.IsMatch(node, matches);
 
     if (matches.Total() > 0)
@@ -39,7 +29,7 @@ void TestPatterns(string query, Trend trend, PopulateBarsFunc populate, string m
             else if (match.IsZeroMatch())
                 Print("Zero Match");
             else
-                Print("Match: ", match.GetStart(), " to ", match.GetEnd());
+                Print(match.IsGroupMatch() ? "  Group: " : "Match: ", match.GetStart(), " to ", match.GetEnd());
         }
         Print(expect ? "[PASS] " : "[FAIL] ", message, " for ", query);
     }
@@ -84,6 +74,9 @@ void OnStart()
 
     // Non Capturing Group
     TestPatterns("(?:B)*>(I)+>(?:B)*", TREND_BULLISH, PopulateBarsWithImbalance, "Non Capturing Group match", true);
+
+    // Position
+    TestPatterns("B>(If)>B>(Ir)_>B", TREND_BULLISH, PopulateBarsWithPosition, "Group with Position match", true);
 
     // Sequence
     TestPatterns("B>I>B", TREND_BULLISH, PopulateBarsWithImbalance, "Sequence match", true);
@@ -135,5 +128,43 @@ void PopulateBarsWithImbalance(CArrayObj &bars)
     bar0.close = 2;
     bar0.open = 1;
     bar0.low = 0;
+    bars.Add(bar0);
+}
+
+void PopulateBarsWithPosition(CArrayObj &bars)
+{
+    Bar *bar4 = new Bar();
+    bar4.high = 5;
+    bar4.close = 4;
+    bar4.open = 2;
+    bar4.low = 1;
+    bars.Add(bar4);
+
+    Bar *bar3 = new Bar();
+    bar3.high = 15;
+    bar3.close = 2;
+    bar3.open = 14;
+    bar3.low = 1;
+    bars.Add(bar3);
+
+    Bar *bar2 = new Bar();
+    bar2.high = 15;
+    bar2.close = 14;
+    bar2.open = 12;
+    bar2.low = 11;
+    bars.Add(bar2);
+
+    Bar *bar1 = new Bar();
+    bar1.high = 13;
+    bar1.close = 12;
+    bar1.open = 7;
+    bar1.low = 6;
+    bars.Add(bar1);
+
+    Bar *bar0 = new Bar();
+    bar0.high = 8;
+    bar0.close = 7;
+    bar0.open = 5;
+    bar0.low = 4;
     bars.Add(bar0);
 }

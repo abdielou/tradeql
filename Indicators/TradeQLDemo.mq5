@@ -13,7 +13,7 @@
 
 #include "../Include/tradeql/TradeQL.mqh"
 
-input string DefaultQuery = "(?:Ir|B)*>(If)+>B*>(Ir)+>B*>(Ir)+>B*"; // ICT SB
+string DefaultQuery = "(?:B|P)*>(If+)>(?:B|P)*>(Ir+)>(?:B|P)+>(Ir+)_>(?:B|P)+"; // ICT SB
 input int MaxBarCount = 20;
 
 const string InputFieldName = "TradeQLQueryInput";
@@ -85,14 +85,14 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
         // Match
         Trend trend = Trend::TREND_BULLISH;
         CArrayObj *matches = new CArrayObj();
-        TradeQL tradeQL(bars, trend, NULL, new DummyPinbarMatcher());
+        TradeQL tradeQL(bars, trend, NULL, NULL);
         tradeQL.Match(query, matches);
         bool hasMatches = matches.Total() > 0;
         if (!hasMatches)
         {
             // Try again with opposite trend
             trend = Trend::TREND_BEARISH;
-            TradeQL tradeQL(bars, trend, NULL, new DummyPinbarMatcher());
+            TradeQL tradeQL(bars, trend, NULL, NULL);
             tradeQL.Match(query, matches);
             hasMatches = matches.Total() > 0;
         }
@@ -221,13 +221,3 @@ void DrawNoMatch(int startIndex, int endIndex)
     if (ObjectCreate(ChartID(), rectangleName, OBJ_RECTANGLE, 0, time1, price1, time2, price2))
         ObjectSetInteger(ChartID(), rectangleName, OBJPROP_COLOR, clrBlack);
 }
-
-class DummyPinbarMatcher : public PatternMatcher
-{
-public:
-    DummyPinbarMatcher() : PatternMatcher() {}
-    bool IsMatch(const int index)
-    {
-        return false;
-    }
-};

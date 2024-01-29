@@ -5,14 +5,15 @@ Quantifier     ::= '*' | '+'
 # Quantifier     ::= '*' | '+' | '{' Number '}'
 # Number         ::= Digit+
 # Digit          ::= '0' | '1' | ... | '9'
+Position       ::= '^' | '_'
 
 # Composite Structures
 BasicExpr      ::= Pattern Direction? Quantifier?
 AltExpr        ::= BasicExpr ('|' BasicExpr)*
 
 # Groups
-Group          ::= '(' AltExpr ')' Quantifier?
-NonCapGroup    ::= '(?:' AltExpr ')' Quantifier?
+Group          ::= '(' AltExpr ')' Quantifier? Position?
+NonCapGroup    ::= '(?:' AltExpr ')' Quantifier? Position?
 
 # Top-Level Structure
 Expression     ::= Group | NonCapGroup | AltExpr
