@@ -38,7 +38,7 @@ Position specifies the relative position of the pattern in the sequence. Either 
 - **Beyond `^`:** The pattern occurs beyond the price of the previous pattern.
 - **Behind `_`:** The pattern occurs behind the price of the previous pattern.
 
-This element can only be applied to groups and in reference to a previous group.
+This element can only be applied to **Capture Groups** and in reference to a previous group.
 
 ### Groups
 
