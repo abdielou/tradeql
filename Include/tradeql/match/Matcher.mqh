@@ -282,7 +282,7 @@ private:
             }
 
             // If previous
-            if (previousGroupMatch != NULL)
+            if (previousGroupMatch != NULL && currentGroupMatch != NULL)
             {
                 // Calculate average mass
                 double currentGroupMatchCenterOfMass = CenterOfMass(currentGroupMatch);
