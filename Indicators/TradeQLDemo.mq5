@@ -13,7 +13,7 @@
 
 #include "../Include/tradeql/TradeQL.mqh"
 
-input string DefaultQuery = "(?:Ir|B)*>(If)+>B*>(Ir)+>B*>(Ir)+>B*"; // ICT SB
+string DefaultQuery = "(?:B|P)*>(If+)>(?:B|P)*>(Ir+)>(?:B|P)+>(Ir+)_>(?:B|P)+"; // ICT SB
 input int MaxBarCount = 20;
 
 const string InputFieldName = "TradeQLQueryInput";
