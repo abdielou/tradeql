@@ -13,7 +13,7 @@
 
 #include "../Include/tradeql/TradeQL.mqh"
 
-input string DefaultQuery = "(?:B|P)*>(If+)>(?:B|P)*>(Ir+)>(?:B|P)*"; // Swing
+input string DefaultQuery = "(?:B|P)*>(If+)>(?:B|P)*>(Ir+)^>(?:B|P)*"; // Swing
 input int MaxBarCount = 20;
 input bool ShowQueryInput = false;
 
