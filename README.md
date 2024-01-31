@@ -252,4 +252,4 @@ The blue square shows the full match, and the red squares show the captured grou
 
 If there are no matches, the indicator will simply show a black box around the target bars.
 
-> NOTE: I'm using this package with various trading tools, indicators and bots that I've built. If you are interested visit my website at [https://www.mozartanalytics.com](https://www.mozartanalytics.com).
+> NOTE: I'm using this package with various trading tools, indicators and bots that I've built. If you are interested please visit my website at [https://www.mozartanalytics.com](https://www.mozartanalytics.com). You can also download the free indicator from the [MetaTrader Marketplace](https://www.mql5.com/en/market/product/112219).
