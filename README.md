@@ -213,7 +213,7 @@ The first match is the full match, and subsequent matches are captured groups if
 void OnStart() {
     // Define the bars and trend
     CArrayObj *bars = ...; // Initialize with your bar data
-    Trend trend = TREND_BULLISH; // or TREND_BEARISH
+    Trend trend = Trend::TREND_BULLISH; // or Trend::TREND_BEARISH
 
     // Instantiate TradeQL
     TradeQL tradeQL(bars, trend);

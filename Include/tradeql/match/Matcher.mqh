@@ -81,11 +81,11 @@ private:
             bool isDirectionMatch = false;
             if (node.GetDirection() == DIRECTION_FORWARD)
             {
-                isDirectionMatch = trend == TREND_BULLISH ? IsBullish(i) : !IsBullish(i);
+                isDirectionMatch = trend == Trend::TREND_BULLISH ? IsBullish(i) : !IsBullish(i);
             }
             else if (node.GetDirection() == DIRECTION_REVERSE)
             {
-                isDirectionMatch = trend == TREND_BULLISH ? !IsBullish(i) : IsBullish(i);
+                isDirectionMatch = trend == Trend::TREND_BULLISH ? !IsBullish(i) : IsBullish(i);
             }
             else
             {
@@ -105,7 +105,7 @@ private:
                 if (node.GetDirection() != DIRECTION_UNKNOWN)
                 {
                     // Override direction. Special case for pinbar
-                    bool isRejectedForward = trend == TREND_BULLISH ? !isRejectedHigh : isRejectedHigh;
+                    bool isRejectedForward = trend == Trend::TREND_BULLISH ? !isRejectedHigh : isRejectedHigh;
                     isDirectionMatch = (node.GetDirection() == DIRECTION_FORWARD && isRejectedForward) || (node.GetDirection() == DIRECTION_REVERSE && !isRejectedForward);
                 }
             }
@@ -287,7 +287,7 @@ private:
                 // Calculate average mass
                 double currentGroupMatchCenterOfMass = CenterOfMass(currentGroupMatch);
                 double previousGroupMatchCenterOfMass = CenterOfMass(previousGroupMatch);
-                bool isBeyond = trend == TREND_BULLISH ? currentGroupMatchCenterOfMass > previousGroupMatchCenterOfMass : currentGroupMatchCenterOfMass < previousGroupMatchCenterOfMass;
+                bool isBeyond = trend == Trend::TREND_BULLISH ? currentGroupMatchCenterOfMass > previousGroupMatchCenterOfMass : currentGroupMatchCenterOfMass < previousGroupMatchCenterOfMass;
 
                 if ((position == POSITION_BEYOND && !isBeyond) || (position == POSITION_BEHIND && isBeyond))
                 {

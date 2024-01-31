@@ -56,39 +56,39 @@ void TestPatterns(string query, Trend trend, PopulateBarsFunc populate, string m
 void _OnStart()
 {
     // Pattern
-    TestPatterns("Bf+", TREND_BULLISH, PopulateBarsWithoutImbalance, "SimplePattern 3 bars match", true);
-    TestPatterns("Br*", TREND_BULLISH, PopulateBarsWithoutImbalance, "SimplePattern zero match", true);
-    TestPatterns("Bf+", TREND_BULLISH, PopulateBarsWithImbalance, "SimplePattern one bar match", true);
-    TestPatterns("I", TREND_BULLISH, PopulateBarsWithoutImbalance, "SimplePattern no match", false);
+    TestPatterns("Bf+", Trend::TREND_BULLISH, PopulateBarsWithoutImbalance, "SimplePattern 3 bars match", true);
+    TestPatterns("Br*", Trend::TREND_BULLISH, PopulateBarsWithoutImbalance, "SimplePattern zero match", true);
+    TestPatterns("Bf+", Trend::TREND_BULLISH, PopulateBarsWithImbalance, "SimplePattern one bar match", true);
+    TestPatterns("I", Trend::TREND_BULLISH, PopulateBarsWithoutImbalance, "SimplePattern no match", false);
 
     // Pinbar
-    TestPatterns("B*>P>B*", TREND_BULLISH, PopulateBarsWithBullishPinbar, "Pinbar match", true);
-    TestPatterns("B*>P>B*", TREND_BULLISH, PopulateBarsWithoutImbalance, "Pinbar no match", false);
-    TestPatterns("B*>Pf>B*", TREND_BULLISH, PopulateBarsWithBullishPinbar, "Pinbar forward match", true);
-    TestPatterns("B*>Pr>B*", TREND_BULLISH, PopulateBarsWithBearishPinbar, "Pinbar reverse match", true);
+    TestPatterns("B*>P>B*", Trend::TREND_BULLISH, PopulateBarsWithBullishPinbar, "Pinbar match", true);
+    TestPatterns("B*>P>B*", Trend::TREND_BULLISH, PopulateBarsWithoutImbalance, "Pinbar no match", false);
+    TestPatterns("B*>Pf>B*", Trend::TREND_BULLISH, PopulateBarsWithBullishPinbar, "Pinbar forward match", true);
+    TestPatterns("B*>Pr>B*", Trend::TREND_BULLISH, PopulateBarsWithBearishPinbar, "Pinbar reverse match", true);
 
     // Alternation
-    TestPatterns("I|B", TREND_BULLISH, PopulateBarsWithoutImbalance, "Alternation match", true);
+    TestPatterns("I|B", Trend::TREND_BULLISH, PopulateBarsWithoutImbalance, "Alternation match", true);
 
     // Group
-    TestPatterns("(Ir+|Bf+)", TREND_BULLISH, PopulateBarsWithoutImbalance, "Group match", true);
-    TestPatterns("(I|B)*", TREND_BULLISH, PopulateBarsWithoutImbalance, "Group zero or more match", true);
-    TestPatterns("(I|Br)*", TREND_BULLISH, PopulateBarsWithoutImbalance, "Group zero match", true);
-    TestPatterns("(I|B)+", TREND_BULLISH, PopulateBarsWithoutImbalance, "Group zero or more match", true);
-    TestPatterns("(I|Br)+", TREND_BULLISH, PopulateBarsWithoutImbalance, "Group zero or more no match", false);
+    TestPatterns("(Ir+|Bf+)", Trend::TREND_BULLISH, PopulateBarsWithoutImbalance, "Group match", true);
+    TestPatterns("(I|B)*", Trend::TREND_BULLISH, PopulateBarsWithoutImbalance, "Group zero or more match", true);
+    TestPatterns("(I|Br)*", Trend::TREND_BULLISH, PopulateBarsWithoutImbalance, "Group zero match", true);
+    TestPatterns("(I|B)+", Trend::TREND_BULLISH, PopulateBarsWithoutImbalance, "Group zero or more match", true);
+    TestPatterns("(I|Br)+", Trend::TREND_BULLISH, PopulateBarsWithoutImbalance, "Group zero or more no match", false);
 
     // Non Capturing Group
-    TestPatterns("(?:B)*>(I)+>(?:B)*", TREND_BULLISH, PopulateBarsWithImbalance, "Non Capturing Group match", true);
+    TestPatterns("(?:B)*>(I)+>(?:B)*", Trend::TREND_BULLISH, PopulateBarsWithImbalance, "Non Capturing Group match", true);
 
     // Position
-    TestPatterns("B>(If)>B>(Ir)_>B", TREND_BULLISH, PopulateBarsWithPosition, "Group with Position match", true);
+    TestPatterns("B>(If)>B>(Ir)_>B", Trend::TREND_BULLISH, PopulateBarsWithPosition, "Group with Position match", true);
 
     // Sequence
-    TestPatterns("B>I>B", TREND_BULLISH, PopulateBarsWithImbalance, "Sequence match", true);
-    TestPatterns("B>I>B", TREND_BULLISH, PopulateBarsWithoutImbalance, "Sequence no match", false);
+    TestPatterns("B>I>B", Trend::TREND_BULLISH, PopulateBarsWithImbalance, "Sequence match", true);
+    TestPatterns("B>I>B", Trend::TREND_BULLISH, PopulateBarsWithoutImbalance, "Sequence no match", false);
 
     // Real Data
-    TestPatterns("(?:B)*>(I)+>(?:B)*", TREND_BULLISH, PopulateBarsWithImbalance, "Real data match", true);
+    TestPatterns("(?:B)*>(I)+>(?:B)*", Trend::TREND_BULLISH, PopulateBarsWithImbalance, "Real data match", true);
 }
 
 void PopulateBarsWithoutImbalance(CArrayObj &bars)
