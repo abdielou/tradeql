@@ -215,15 +215,15 @@ void OnStart() {
     CArrayObj *bars = ...; // Initialize with your bar data
     Trend trend = Trend::TREND_BULLISH; // or Trend::TREND_BEARISH
 
-    // Instantiate TradeQL
-    TradeQL tradeQL(bars, trend);
-
     // Define a TradeQL query
     string query = "B+>(If+)";
 
+    // Instantiate TradeQL
+    TradeQL tradeQL(query);
+
     // Execute the query
     CArrayObj *matches = new CArrayObj();
-    tradeQL.Match(query, matches);
+    tradeQL.Match(bars, trend, matches);
 
     // Process the results
     for (int i = 0; i < matches.Total(); i++) {

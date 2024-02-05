@@ -11,9 +11,9 @@ void TestPatterns(string query, Trend trend, PopulateBarsFunc populate, string m
 
     // Match
     PinbarMatcher *customPinMatcher = new PinbarMatcher(AverageBarSize(*testBars)); // (optional) pinbar matcher with custom average bar size
-    TradeQL tradeQL(testBars, trend, NULL, customPinMatcher);
+    TradeQL tradeQL(query, NULL, customPinMatcher);
     CArrayObj *matches = new CArrayObj();
-    tradeQL.Match(query, matches);
+    tradeQL.Match(testBars, trend, matches);
 
     if (matches.Total() > 0)
     {
