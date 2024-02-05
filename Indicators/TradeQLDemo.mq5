@@ -90,15 +90,15 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
         // Match
         Trend trend = Trend::TREND_BULLISH;
         CArrayObj *matches = new CArrayObj();
-        TradeQL tradeQL(bars, trend, NULL, NULL);
-        tradeQL.Match(query, matches);
+        TradeQL tradeQL(query);
+        tradeQL.Match(bars, trend, matches);
         bool hasMatches = matches.Total() > 0;
         if (!hasMatches)
         {
             // Try again with opposite trend
             trend = Trend::TREND_BEARISH;
-            TradeQL tradeQL(bars, trend, NULL, NULL);
-            tradeQL.Match(query, matches);
+            TradeQL tradeQL(query);
+            tradeQL.Match(bars, trend, matches);
             hasMatches = matches.Total() > 0;
         }
 

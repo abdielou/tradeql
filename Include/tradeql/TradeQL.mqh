@@ -9,15 +9,12 @@
 class TradeQL
 {
 private:
-    CArrayObj *bars;
-    Trend trend;
+    ASTNode *node;
     PatternMatcher *imbMatcher;
     PatternMatcher *pinMatcher;
 
 public:
-    TradeQL(CArrayObj *pbars, Trend ptrend, PatternMatcher *imbalanceMatcher = NULL, PatternMatcher *pinbarMatcher = NULL) : bars(pbars), trend(ptrend), imbMatcher(imbalanceMatcher), pinMatcher(pinbarMatcher) {}
-
-    void Match(string query, CArrayObj *matches)
+    TradeQL(string query, PatternMatcher *imbalanceMatcher = NULL, PatternMatcher *pinbarMatcher = NULL) : imbMatcher(imbalanceMatcher), pinMatcher(pinbarMatcher)
     {
         // Tokenize the query
         Lexer lexer(query);
@@ -30,7 +27,7 @@ public:
 
         // Parse the tokens into an AST
         Parser parser(tokens);
-        ASTNode *node = parser.Parse();
+        node = parser.Parse();
         if (node == NULL)
         {
             Print("WARNING: No ASTNode returned");
@@ -38,10 +35,24 @@ public:
             delete node;
             return;
         }
+    }
+
+    ~TradeQL()
+    {
+        if (node != NULL)
+            delete node;
+    }
+
+    void Match(CArrayObj *bars, Trend trend, CArrayObj *matches)
+    {
+        if (this.node == NULL)
+        {
+            Print("WARNING: No ASTNode found");
+            return;
+        }
 
         // Run the parsed AST against the list of bars
-        Matcher matcher(this.bars, this.trend, this.imbMatcher, this.pinMatcher);
-        matcher.IsMatch(node, matches);
-        delete node;
+        Matcher matcher(bars, trend, this.imbMatcher, this.pinMatcher);
+        matcher.IsMatch(this.node, matches);
     }
 };
