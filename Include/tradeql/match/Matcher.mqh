@@ -320,7 +320,11 @@ private:
             {
                 AddMatchesToMainList(tempMatches, innerMatches);
                 Match *lastMatch = (Match *)innerMatches.At(innerMatches.Total() - 1);
-                currentIndex = lastMatch.GetEnd() - 1;
+                // If end is -1, then we have run out of bars or have a zero match, therefore we restart
+                if (lastMatch.GetEnd() == -1)
+                    currentIndex = lastMatch.GetStart();
+                else
+                    currentIndex = lastMatch.GetEnd() - 1;
             }
             else // No match, therefore sequence not matched
             {

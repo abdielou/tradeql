@@ -87,6 +87,9 @@ void _OnStart()
     TestPatterns("B>I>B", Trend::TREND_BULLISH, PopulateBarsWithImbalance, "Sequence match", true);
     TestPatterns("B>I>B", Trend::TREND_BULLISH, PopulateBarsWithoutImbalance, "Sequence no match", false);
 
+    // Zero Match
+    TestPatterns("B>I>P*>B", Trend::TREND_BULLISH, PopulateBarsWithImbalance, "Sequence with a zero match pattern", true);
+
     // Real Data
     TestPatterns("(?:B)*>(I)+>(?:B)*", Trend::TREND_BULLISH, PopulateBarsWithImbalance, "Real data match", true);
 }
